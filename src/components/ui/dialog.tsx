@@ -18,7 +18,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out",
+      "fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -35,13 +35,13 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 flex w-[min(96vw,1100px)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-[1.75rem] border border-white/15 bg-slate-950/90 p-6 text-white shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out",
+        "fixed left-1/2 top-1/2 z-50 flex max-h-[92vh] w-[min(96vw,1100px)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden rounded-[1.75rem] border border-white/15 bg-slate-950/90 p-6 text-white shadow-2xl data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+      <DialogPrimitive.Close className="fixed right-4 top-4 z-[70] rounded-full border border-white/12 bg-black/35 p-2 text-white/80 shadow-lg backdrop-blur-md transition hover:bg-white/12 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:right-6 sm:top-6">
         <XIcon className="size-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>

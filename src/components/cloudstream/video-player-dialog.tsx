@@ -41,14 +41,14 @@ export function VideoPlayerDialog({
       }}
       open={open}
     >
-      <DialogContent className="p-0">
-        <DialogHeader className="border-b border-white/10 px-6 py-5">
+      <DialogContent className="overflow-hidden p-0">
+        <DialogHeader className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/80 px-6 py-5 backdrop-blur-xl">
           <DialogTitle>{fileName ?? "Video stream"}</DialogTitle>
           <DialogDescription>
             Streaming through the CloudStream edge proxy with HTTP range support.
           </DialogDescription>
         </DialogHeader>
-        <div className="px-6 pb-6">
+        <div className="overflow-y-auto px-6 pb-6">
           {fileId && mimeType ? (
             <VideoPlayer
               fileId={fileId}

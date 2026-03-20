@@ -105,6 +105,7 @@ export function VideoPlayer({
   } | null>(null);
   const lastTapRef = useRef<{ side: "left" | "right"; time: number } | null>(null);
   const toastTimeoutRef = useRef<number | null>(null);
+  const interactionHudTimeoutRef = useRef<number | null>(null);
   const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [resumeTime, setResumeTime] = useState<number | null>(null);
   const [theaterMode, setTheaterMode] = useState(false);
@@ -119,6 +120,7 @@ export function VideoPlayer({
   const [gestureHud, setGestureHud] = useState<string | null>(null);
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const [resolution, setResolution] = useState<{ width: number; height: number } | null>(null);
+  const [interactionHud, setInteractionHud] = useState<"play" | "pause" | null>(null);
 
   const storageKey = useMemo(() => `cloudstream:resume:${fileId}`, [fileId]);
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
@@ -156,6 +158,10 @@ export function VideoPlayer({
       if (toastTimeoutRef.current) {
         window.clearTimeout(toastTimeoutRef.current);
       }
+
+      if (interactionHudTimeoutRef.current) {
+        window.clearTimeout(interactionHudTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -173,8 +179,8 @@ export function VideoPlayer({
 
       const canvas = ambientCanvasRef.current ?? document.createElement("canvas");
       ambientCanvasRef.current = canvas;
-      canvas.width = 192;
-      canvas.height = 108;
+      canvas.width = 96;
+      canvas.height = 54;
 
       const context = canvas.getContext("2d");
 
@@ -183,11 +189,11 @@ export function VideoPlayer({
       }
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      setAmbientFrame(canvas.toDataURL("image/jpeg", 0.45));
+      setAmbientFrame(canvas.toDataURL("image/jpeg", 0.3));
     };
 
     captureFrame();
-    const interval = window.setInterval(captureFrame, 1800);
+    const interval = window.setInterval(captureFrame, 4000);
 
     return () => {
       window.clearInterval(interval);
@@ -277,10 +283,12 @@ export function VideoPlayer({
     }
 
     if (videoRef.current.paused) {
+      setInteractionHud("play");
       void videoRef.current.play().catch(() => undefined);
       return;
     }
 
+    setInteractionHud("pause");
     videoRef.current.pause();
   };
 
@@ -316,7 +324,7 @@ export function VideoPlayer({
       return;
     }
 
-    if (lastPreviewRequestRef.current !== null && Math.abs(lastPreviewRequestRef.current - time) < 0.4) {
+    if (lastPreviewRequestRef.current !== null && Math.abs(lastPreviewRequestRef.current - time) < 0.9) {
       return;
     }
 
@@ -333,8 +341,8 @@ export function VideoPlayer({
 
     const canvas = previewCanvasRef.current ?? document.createElement("canvas");
     previewCanvasRef.current = canvas;
-    canvas.width = 160;
-    canvas.height = 90;
+    canvas.width = 128;
+    canvas.height = 72;
 
     const context = canvas.getContext("2d");
 
@@ -347,7 +355,7 @@ export function VideoPlayer({
       currentValue
         ? {
             ...currentValue,
-            image: canvas.toDataURL("image/jpeg", 0.55),
+            image: canvas.toDataURL("image/jpeg", 0.45),
           }
         : currentValue
     );
@@ -479,8 +487,28 @@ export function VideoPlayer({
     setVolume(media.volume);
   };
 
+  useEffect(() => {
+    if (!interactionHud) {
+      return;
+    }
+
+    if (interactionHudTimeoutRef.current) {
+      window.clearTimeout(interactionHudTimeoutRef.current);
+    }
+
+    interactionHudTimeoutRef.current = window.setTimeout(() => {
+      setInteractionHud(null);
+    }, 480);
+
+    return () => {
+      if (interactionHudTimeoutRef.current) {
+        window.clearTimeout(interactionHudTimeoutRef.current);
+      }
+    };
+  }, [interactionHud]);
+
   return (
-    <div className="space-y-4">
+    <div className="animate-in fade-in-0 zoom-in-95 space-y-4 duration-300">
       <div className="glass-panel rounded-[1.6rem] px-4 py-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
@@ -580,6 +608,18 @@ export function VideoPlayer({
             </div>
           ) : null}
 
+          {interactionHud ? (
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 animate-in fade-in-0 zoom-in-75 duration-200">
+              <div className="rounded-full border border-white/12 bg-black/34 p-5 text-white shadow-2xl backdrop-blur-xl">
+                {interactionHud === "play" ? (
+                  <PlayIcon className="size-7" />
+                ) : (
+                  <PauseIcon className="size-7" />
+                )}
+              </div>
+            </div>
+          ) : null}
+
           <div className="group relative">
             <video
               ref={videoRef}
@@ -587,6 +627,7 @@ export function VideoPlayer({
               playsInline
               preload="metadata"
               style={{ filter: `brightness(${brightness})` }}
+              onClick={togglePlay}
               onEnded={() => {
                 window.localStorage.removeItem(storageKey);
                 setResumeTime(null);
@@ -631,10 +672,10 @@ export function VideoPlayer({
 
             <video
               ref={previewVideoRef}
-              className="hidden"
+              className="pointer-events-none absolute left-0 top-0 size-0 opacity-0"
               muted
               playsInline
-              preload="metadata"
+              preload="auto"
               src={src}
               onSeeked={drawPreviewFrame}
             />
@@ -673,17 +714,21 @@ export function VideoPlayer({
                     style={{ left: preview.x }}
                   >
                     <div className="overflow-hidden rounded-[1rem] border border-white/12 bg-black/70 shadow-2xl backdrop-blur-md">
-                      <div className="h-[90px] w-[160px] bg-slate-900">
+                      <div className="h-[72px] w-[128px] bg-slate-900">
                         {preview.image ? (
                           <Image
                             alt="Preview frame"
                             className="h-full w-full object-cover"
-                            height={90}
+                            height={72}
                             src={preview.image}
                             unoptimized
-                            width={160}
+                            width={128}
                           />
-                        ) : null}
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-[0.24em] text-white/35">
+                            Loading
+                          </div>
+                        )}
                       </div>
                       <div className="px-3 py-2 text-center text-xs font-medium text-white">
                         {formatPlaybackTime(preview.time)}
@@ -702,7 +747,7 @@ export function VideoPlayer({
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <button
                     className="liquid-glass flex size-11 items-center justify-center rounded-full text-white"
