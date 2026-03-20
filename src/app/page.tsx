@@ -3,7 +3,7 @@ import { DriveDashboard } from "@/components/cloudstream/drive-dashboard";
 import { LandingPanel } from "@/components/cloudstream/landing-panel";
 import { getDeskStatus } from "@/lib/desk-status";
 import { isVideoFile, type DriveView } from "@/lib/drive-shared";
-import { hasAuthEnv } from "@/lib/env";
+import { getMissingAuthEnv, hasAuthEnv } from "@/lib/env";
 import {
   getDriveFileMetadata,
   getFolderBreadcrumbs,
@@ -25,6 +25,7 @@ function getSingleValue(value: SearchParamValue) {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const authReady = hasAuthEnv();
+  const missingAuthEnv = getMissingAuthEnv();
   const deskStatus = await getDeskStatus();
 
   if (!authReady) {
@@ -32,7 +33,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <LandingPanel
         authReady={false}
         deskStatus={deskStatus}
-        errorMessage="Set NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET in .env.local before signing in."
+        errorMessage={`Missing auth env vars: ${missingAuthEnv.join(", ")}`}
       />
     );
   }

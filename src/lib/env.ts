@@ -12,3 +12,7 @@ export function getEnv(name: string) {
 export function hasAuthEnv() {
   return AUTH_ENV_NAMES.every((name) => Boolean(process.env[name]));
 }
+
+export function getMissingAuthEnv() {
+  return AUTH_ENV_NAMES.filter((name) => !process.env[name]);
+}
