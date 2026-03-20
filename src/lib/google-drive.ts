@@ -63,7 +63,11 @@ function buildQuery({ folderId, query, videosOnly, view }: DriveRequestOptions) 
   return filters.join(" and ");
 }
 
-function buildOrdering(view: DriveView) {
+function buildOrdering(view: DriveView, query?: string) {
+  if (query?.trim()) {
+    return undefined;
+  }
+
   if (view === "recent") {
     return "viewedByMeTime desc, modifiedTime desc";
   }
@@ -94,7 +98,12 @@ export async function listDriveItems(options: DriveRequestOptions) {
   url.searchParams.set("q", buildQuery(options));
   url.searchParams.set("fields", DEFAULT_FIELDS);
   url.searchParams.set("pageSize", "100");
-  url.searchParams.set("orderBy", buildOrdering(options.view));
+  const ordering = buildOrdering(options.view, options.query);
+
+  if (ordering) {
+    url.searchParams.set("orderBy", ordering);
+  }
+
   url.searchParams.set("supportsAllDrives", "true");
   url.searchParams.set("includeItemsFromAllDrives", "true");
 

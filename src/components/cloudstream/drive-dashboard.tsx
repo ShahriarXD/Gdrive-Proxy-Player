@@ -151,7 +151,7 @@ export function DriveDashboard({
 
               return (
                 <Link
-                  className={`glass-hover hover-sheen rounded-[1.2rem] px-4 py-3.5 transition ${
+                  className={`glass-hover block w-full rounded-[1.2rem] px-4 py-3.5 transition ${
                     active
                       ? "border border-white/30 bg-[linear-gradient(180deg,rgba(99,113,255,0.92),rgba(95,158,255,0.78))] text-primary-foreground shadow-[0_20px_46px_-28px_rgba(74,102,255,0.52),inset_0_1px_0_rgba(255,255,255,0.24)]"
                       : "glass-pill text-foreground"
@@ -163,7 +163,7 @@ export function DriveDashboard({
                     <Icon className="size-4" />
                     <div>
                       <p className="text-sm font-medium">{value.label}</p>
-                      <p className={`text-xs ${active ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                      <p className={`text-xs ${active ? "text-primary-foreground/82" : "text-slate-500"}`}>
                         {value.description}
                       </p>
                     </div>
