@@ -13,13 +13,11 @@ import { Button } from "@/components/ui/button";
 import type { DeskStatus } from "@/lib/desk-status";
 
 type LandingPanelProps = {
-  authReady?: boolean;
   deskStatus: DeskStatus;
   errorMessage?: string;
 };
 
 export function LandingPanel({
-  authReady = true,
   deskStatus,
   errorMessage,
 }: LandingPanelProps) {
@@ -65,7 +63,7 @@ export function LandingPanel({
           <LandingSearchBar disabled />
 
           <div className="flex flex-wrap items-center gap-3">
-            <GoogleSignInButton disabled={!authReady} />
+            <GoogleSignInButton />
             <p className="text-sm text-muted-foreground">
               One tap gets you into CloudStream with official Google sign-in.
             </p>

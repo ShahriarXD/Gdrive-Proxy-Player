@@ -36,7 +36,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   if (!authReady) {
     return (
       <LandingPanel
-        authReady={false}
         deskStatus={deskStatus}
         errorMessage={[
           `Missing required auth env vars: ${missingAuthEnv.join(", ")}`,

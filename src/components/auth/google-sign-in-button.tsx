@@ -40,21 +40,25 @@ export function GoogleSignInButton({ disabled = false }: GoogleSignInButtonProps
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const startGoogleSignIn = async () => {
+    if (disabled) {
+      return;
+    }
+
     setIsSubmitting(true);
-    await signIn("google");
+    await signIn("google", { callbackUrl: "/" });
     setIsSubmitting(false);
   };
 
   return (
     <Button
       className="min-w-[220px] justify-center"
-      disabled={disabled || isSubmitting}
+      disabled={isSubmitting}
       onClick={startGoogleSignIn}
       size="lg"
       variant="secondary"
     >
       <GoogleLogo />
-      {disabled ? "Google sign-in unavailable" : isSubmitting ? "Redirecting..." : "Continue with Google"}
+      {isSubmitting ? "Redirecting..." : "Continue with Google"}
     </Button>
   );
 }
