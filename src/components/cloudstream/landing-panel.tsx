@@ -5,6 +5,7 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { LandingSearchBar } from "@/components/cloudstream/landing-search-bar";
@@ -98,6 +99,15 @@ export function LandingPanel({
               {errorMessage}
             </div>
           ) : null}
+
+          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+            <Link className="glass-pill glass-hover rounded-full px-4 py-2" href="/privacy-policy">
+              Privacy Policy
+            </Link>
+            <Link className="glass-pill glass-hover rounded-full px-4 py-2" href="/terms-of-service">
+              Terms of Service
+            </Link>
+          </div>
         </section>
 
         <section className="animate-slide-up-fade relative flex min-h-[720px] items-center justify-center delay-100">
