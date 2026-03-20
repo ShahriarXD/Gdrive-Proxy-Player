@@ -15,6 +15,25 @@ const FORWARDED_HEADERS = [
   "last-modified",
 ] as const;
 
+const DRIVE_FILE_ID_PATTERN = /^[A-Za-z0-9_-]{10,}$/;
+const BYTE_RANGE_PATTERN = /^bytes=(\d*)-(\d*)$/;
+
+function sanitizeFilename(value: string) {
+  return value
+    .replace(/[\r\n"]/g, "")
+    .replace(/[^\w.()\-\s]/g, "_")
+    .trim()
+    .slice(0, 180);
+}
+
+function isValidRangeHeader(range: string | null) {
+  if (!range) {
+    return true;
+  }
+
+  return BYTE_RANGE_PATTERN.test(range.trim());
+}
+
 async function handleStreamRequest(
   request: Request,
   context: { params: Promise<{ fileId: string }> }
@@ -26,6 +45,17 @@ async function handleStreamRequest(
   }
 
   const { fileId } = await context.params;
+
+  if (!DRIVE_FILE_ID_PATTERN.test(fileId)) {
+    return new Response("Invalid file id.", { status: 400 });
+  }
+
+  const range = request.headers.get("range");
+
+  if (!isValidRangeHeader(range)) {
+    return new Response("Invalid range header.", { status: 400 });
+  }
+
   const metadata = await getDriveFileMetadata(session.accessToken, fileId);
 
   if (!metadata.mimeType.startsWith("video/")) {
@@ -36,7 +66,6 @@ async function handleStreamRequest(
   mediaUrl.searchParams.set("alt", "media");
   mediaUrl.searchParams.set("supportsAllDrives", "true");
 
-  const range = request.headers.get("range");
   const upstream = await fetch(mediaUrl, {
     method: request.method,
     headers: {
@@ -50,10 +79,10 @@ async function handleStreamRequest(
     console.error("Google Drive stream failed", {
       fileId,
       status: upstream.status,
-      details,
+      reason: details.slice(0, 300),
     });
 
-    return new Response(details || "Unable to read the video stream.", {
+    return new Response("Unable to read the video stream.", {
       status: upstream.status,
     });
   }
@@ -80,10 +109,12 @@ async function handleStreamRequest(
   }
 
   if (!headers.has("content-disposition")) {
-    headers.set("content-disposition", `inline; filename="${metadata.name}"`);
+    const safeFilename = sanitizeFilename(metadata.name || "video");
+    headers.set("content-disposition", `inline; filename="${safeFilename || "video"}"`);
   }
 
   headers.set("x-content-type-options", "nosniff");
+  headers.set("cache-control", "private, no-store, max-age=0");
 
   return new Response(upstream.body, {
     status: upstream.status,

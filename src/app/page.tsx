@@ -17,7 +17,7 @@ type HomePageProps = {
   searchParams: Promise<Record<string, SearchParamValue>>;
 };
 
-const allowedViews = new Set<DriveView>(["my-drive", "shared", "starred", "recent"]);
+const allowedViews = new Set<DriveView>(["my-drive"]);
 
 function getSingleValue(value: SearchParamValue) {
   return Array.isArray(value) ? value[0] : value;
@@ -40,7 +40,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   const rawView = getSingleValue(params.view);
   const view = allowedViews.has(rawView as DriveView) ? (rawView as DriveView) : "my-drive";
-  const folderId = getSingleValue(params.folderId) ?? (view === "my-drive" ? "root" : undefined);
+  const folderId = getSingleValue(params.folderId) ?? "root";
   const query = getSingleValue(params.q) ?? "";
   const videosOnly = getSingleValue(params.videos) === "1";
   const selectedVideoId = getSingleValue(params.videoId);

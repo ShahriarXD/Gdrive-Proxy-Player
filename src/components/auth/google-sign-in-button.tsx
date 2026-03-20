@@ -51,11 +51,11 @@ export function GoogleSignInButton({ disabled = false }: GoogleSignInButtonProps
 
   return (
     <Button
-      className="min-w-[220px] justify-center"
+      className="google-cta min-w-55 justify-center"
       disabled={isSubmitting}
       onClick={startGoogleSignIn}
       size="lg"
-      variant="secondary"
+      variant="default"
     >
       <GoogleLogo />
       {isSubmitting ? "Redirecting..." : "Continue with Google"}

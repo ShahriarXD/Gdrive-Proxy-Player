@@ -1,19 +1,12 @@
 "use client";
 
 import {
-  BellIcon,
   ChevronRightIcon,
-  Clock3Icon,
   FileIcon,
   FolderIcon,
-  HelpCircleIcon,
   ImageIcon,
   LayoutGridIcon,
-  MoreHorizontalIcon,
   MonitorPlayIcon,
-  Settings2Icon,
-  StarIcon,
-  UsersIcon,
 } from "lucide-react";
 import Image from "next/image";
 import type { Route } from "next";
@@ -67,21 +60,6 @@ const viewMeta: Record<
     icon: LayoutGridIcon,
     label: "My Drive",
     description: "Your primary Google Drive space",
-  },
-  shared: {
-    icon: UsersIcon,
-    label: "Shared with Me",
-    description: "Items others have shared with you",
-  },
-  starred: {
-    icon: StarIcon,
-    label: "Starred",
-    description: "Pinned files and folders",
-  },
-  recent: {
-    icon: Clock3Icon,
-    label: "Recent",
-    description: "Files you opened most recently",
   },
 };
 
@@ -146,7 +124,6 @@ export function DriveDashboard({
   const router = useRouter();
   const [, startTransition] = useTransition();
   const view = viewMeta[currentView];
-  const recentItems = items.slice(0, 5);
   const firstName = userName.split(" ")[0] || "Rafin";
   const [activeVideo, setActiveVideo] = useState<DriveItem | null>(selectedVideo);
   const usage = storageStatus?.usage ? Number(storageStatus.usage) : null;
@@ -203,10 +180,10 @@ export function DriveDashboard({
   return (
     <>
       <main
-        className="mx-auto grid min-h-screen w-full max-w-[1680px] gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[300px_minmax(0,1fr)]"
+        className="mx-auto grid min-h-screen w-full max-w-420 gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[300px_minmax(0,1fr)]"
         data-app-shell="true"
       >
-        <aside className="sidebar-shadow liquid-glass hidden min-h-[calc(100vh-2rem)] shrink-0 rounded-[2rem] p-5 lg:flex lg:flex-col lg:gap-6">
+        <aside className="sidebar-shadow liquid-glass hidden min-h-[calc(100vh-2rem)] shrink-0 rounded-4xl p-5 lg:flex lg:flex-col lg:gap-6">
           <div className="rounded-[1.6rem] px-2 py-2">
             <p className="text-[1.6rem] font-semibold tracking-[-0.05em] text-foreground xl:text-[2rem]">CloudStream</p>
             <p className="text-sm text-muted-foreground">Drive workspace by KM</p>
@@ -241,29 +218,7 @@ export function DriveDashboard({
             })}
           </nav>
 
-          <div className="liquid-glass rounded-[1.5rem] p-4">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-              Recent folders
-            </p>
-            <div className="space-y-2">
-              {breadcrumbs.length ? breadcrumbs.map((breadcrumb) => (
-                <Link
-                  className="glass-hover rounded-2xl px-3 py-2.5 text-sm text-foreground"
-                  href={buildHref(currentView, { folderId: breadcrumb.id, videoId: undefined }, currentQuery, videosOnly)}
-                  key={breadcrumb.id}
-                >
-                  <FolderIcon className="size-4 text-primary" />
-                  <span className="truncate">{breadcrumb.name}</span>
-                </Link>
-              )) : (
-                <div className="rounded-2xl bg-slate-50 px-3 py-3 text-sm text-muted-foreground">
-                  Your root folder is ready.
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="liquid-glass mt-auto rounded-[1.5rem] p-4">
+          <div className="liquid-glass mt-auto rounded-3xl p-4">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -291,7 +246,7 @@ export function DriveDashboard({
           </div>
         </aside>
 
-        <section className="liquid-glass min-w-0 rounded-[2rem] p-4 md:p-6">
+        <section className="liquid-glass min-w-0 rounded-4xl p-4 md:p-6">
           <header className="topbar-shadow glass-panel rounded-[1.9rem] p-4 md:p-5">
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between gap-4">
@@ -303,34 +258,6 @@ export function DriveDashboard({
                 </div>
                 <div className="hidden flex-1 lg:block">
                   <DriveToolbar defaultQuery={currentQuery} videosOnly={videosOnly} />
-                </div>
-              <div className="flex items-center gap-2">
-                {[HelpCircleIcon, Settings2Icon, BellIcon].map((Icon, index) => (
-                    <button
-                      className="glass-pill glass-hover flex size-11 items-center justify-center rounded-2xl text-slate-600"
-                      key={index}
-                      type="button"
-                    >
-                      <Icon className="size-5" />
-                    </button>
-                  ))}
-                  <div className="hidden md:block">
-                    {userImage ? (
-                      <div className="relative size-12 overflow-hidden rounded-full border border-white/70 shadow-[0_10px_25px_-18px_rgba(30,41,59,0.4)]">
-                        <Image
-                          alt={userName}
-                          className="object-cover"
-                          fill
-                          sizes="48px"
-                          src={userImage}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex size-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-500">
-                        {userName.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
 
@@ -426,92 +353,6 @@ export function DriveDashboard({
               <LocalDeskWidget initialStatus={deskStatus} />
             </section>
 
-            {recentItems.length ? (
-              <section className="glass-panel section-enter rounded-[1.9rem] p-5 md:p-6">
-                <div className="mb-5 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">Recently used</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Jump back into the files you touched most recently.
-                    </p>
-                  </div>
-                  <div className="hidden items-center gap-2 md:flex">
-                    <Button size="icon" variant="outline">
-                      <LayoutGridIcon className="size-4" />
-                    </Button>
-                    <Button size="icon" variant="outline">
-                      <MoreHorizontalIcon className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="dashboard-grid grid gap-4">
-                  {recentItems.map((item) => {
-                    const Icon = getItemIcon(item);
-                    const internalHref = isFolder(item)
-                      ? buildHref(
-                          currentView,
-                          { folderId: item.id, videoId: undefined },
-                          currentQuery,
-                          videosOnly
-                        )
-                      : isVideoFile(item)
-                        ? buildHref(
-                            currentView,
-                            {
-                              folderId: currentFolderId,
-                              videoId: item.id,
-                            },
-                            currentQuery,
-                            videosOnly
-                          )
-                        : null;
-                    const externalHref = !internalHref ? item.webViewLink ?? "#" : null;
-                    const external = !isFolder(item) && !isVideoFile(item);
-
-                    return (
-                      <article
-                        className="premium-surface micro-lift group rounded-[1.6rem] p-4"
-                        key={item.id}
-                      >
-                        <div className="mb-5 flex items-center justify-between">
-                          <div className="flex size-12 items-center justify-center rounded-2xl bg-slate-100 text-primary">
-                            <Icon className="size-5" />
-                          </div>
-                          <button className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700" type="button">
-                            <MoreHorizontalIcon className="size-4" />
-                          </button>
-                        </div>
-                        <h4 className="line-clamp-2 text-base font-semibold text-foreground">{formatFileName(item.name)}</h4>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video file" : item.mimeType}
-                        </p>
-                        <p className="mt-1 text-sm text-muted-foreground">{formatBytes(item.size)}</p>
-                        <div className="mt-5">
-                          {isVideoFile(item) ? (
-                            <Button className="w-full" onClick={() => openVideo(item)} variant="default">
-                              Play video
-                            </Button>
-                          ) : (
-                            <Button asChild className="w-full" variant="secondary">
-                              {external ? (
-                                <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
-                                  Open file
-                                </a>
-                              ) : (
-                                <Link href={internalHref ?? "/"}>
-                                  Open folder
-                                </Link>
-                              )}
-                            </Button>
-                          )}
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </section>
-            ) : null}
-
             <section className="glass-panel section-enter rounded-[1.9rem] p-5 md:p-6">
               <div className="mb-5 flex items-center justify-between">
                 <div>
@@ -556,7 +397,7 @@ export function DriveDashboard({
                       const external = !isFolder(item) && !isVideoFile(item);
 
                       return (
-                      <article className="premium-surface micro-lift hover-sheen rounded-[1.5rem] p-4" key={item.id}>
+                      <article className="premium-surface micro-lift hover-sheen rounded-3xl p-4" key={item.id}>
                           <div className="flex items-start gap-4">
                             <div className="flex size-14 shrink-0 items-center justify-center rounded-[1.4rem] bg-slate-50 text-primary">
                               <Icon className="size-5" />
@@ -596,7 +437,7 @@ export function DriveDashboard({
                     })}
                   </div>
 
-                  <div className="liquid-glass hidden overflow-hidden rounded-[1.5rem] md:block">
+                  <div className="liquid-glass hidden overflow-hidden rounded-3xl md:block">
                   <div className="liquid-divider grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] gap-4 px-5 py-4 text-sm font-medium text-muted-foreground">
                     <span>Name</span>
                     <span>Last modified</span>

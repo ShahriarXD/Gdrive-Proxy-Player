@@ -56,10 +56,6 @@ function buildQuery({ folderId, query, videosOnly, view }: DriveRequestOptions) 
     filters.push(`'${folderId}' in parents`);
   } else if (!hasSearchQuery && view === "my-drive") {
     filters.push("'root' in parents");
-  } else if (view === "shared") {
-    filters.push("sharedWithMe = true");
-  } else if (view === "starred") {
-    filters.push("starred = true");
   }
 
   if (hasSearchQuery) {
@@ -79,9 +75,7 @@ function buildOrdering(view: DriveView, query?: string) {
     return undefined;
   }
 
-  if (view === "recent") {
-    return "viewedByMeTime desc, modifiedTime desc";
-  }
+  void view;
 
   return "folder,name_natural";
 }

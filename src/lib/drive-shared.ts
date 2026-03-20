@@ -1,4 +1,4 @@
-export type DriveView = "my-drive" | "shared" | "starred" | "recent";
+export type DriveView = "my-drive";
 
 export type DriveItem = {
   id: string;

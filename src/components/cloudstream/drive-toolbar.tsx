@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchIcon, SlidersHorizontalIcon, VideoIcon } from "lucide-react";
+import { SearchIcon, VideoIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useEffect, useRef, useState } from "react";
 
@@ -98,10 +98,6 @@ export function DriveToolbar({ defaultQuery, videosOnly }: DriveToolbarProps) {
         >
           <VideoIcon className="size-4" />
           {videosOnly ? "Videos only" : "Show videos"}
-        </Button>
-        <Button className="min-w-29" variant="outline">
-          <SlidersHorizontalIcon className="size-4" />
-          Filters
         </Button>
       </div>
     </div>
