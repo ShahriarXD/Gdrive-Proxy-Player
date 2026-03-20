@@ -1,6 +1,6 @@
 # CloudStream by KM
 
-CloudStream is a Next.js 15 App Router application that lets users authenticate with Google, explore their Google Drive in a dashboard UI, and stream video files through a range-aware proxy route designed for Vercel Edge.
+CloudStream is a Next.js 15 App Router application that lets users authenticate with Google, explore their Google Drive in a dashboard UI, and stream video files through a range-aware proxy route.
 
 ## Stack
 
@@ -44,4 +44,5 @@ Open `http://localhost:3000`.
 - Update `NEXTAUTH_URL` to your production URL.
 - The stream route is configured with `runtime = "edge"` and `dynamic = "force-dynamic"`.
 - Middleware protects `/api/*` routes and skips `/api/auth/*`.
+
 # Gdrive-Proxy-Player
