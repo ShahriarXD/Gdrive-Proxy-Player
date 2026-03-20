@@ -326,29 +326,29 @@
 @keyframes dialog-spring-in {
   0% {
     opacity: 0;
-    transform: translate(-50%, calc(-50% + 26px)) scale(0.96);
+    transform: translateY(26px) scale(0.96);
   }
 
   55% {
     opacity: 1;
-    transform: translate(-50%, calc(-50% - 5px)) scale(1.012);
+    transform: translateY(-5px) scale(1.012);
   }
 
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes dialog-spring-out {
   from {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateY(0) scale(1);
   }
 
   to {
     opacity: 0;
-    transform: translate(-50%, calc(-50% + 14px)) scale(0.985);
+    transform: translateY(14px) scale(0.985);
   }
 }
 
