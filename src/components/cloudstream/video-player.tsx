@@ -34,6 +34,7 @@ type PreviewState = {
 };
 
 type GestureMode = "volume" | "brightness";
+type InteractionHudState = "play" | "pause" | "+10s" | "-10s";
 
 const RESUME_MINIMUM_SECONDS = 8;
 const SEEK_SECONDS = 10;
@@ -88,12 +89,16 @@ export function VideoPlayer({
   src,
   type,
 }: VideoPlayerProps) {
+  const playerShellRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const ambientCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const previewSeekFrameRef = useRef<number | null>(null);
+  const pendingPreviewTimeRef = useRef<number | null>(null);
   const lastPreviewRequestRef = useRef<number | null>(null);
+  const hoverFrameRef = useRef<number | null>(null);
   const dragActiveRef = useRef(false);
   const gestureStateRef = useRef<{
     active: boolean;
@@ -120,7 +125,10 @@ export function VideoPlayer({
   const [gestureHud, setGestureHud] = useState<string | null>(null);
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const [resolution, setResolution] = useState<{ width: number; height: number } | null>(null);
-  const [interactionHud, setInteractionHud] = useState<"play" | "pause" | null>(null);
+  const [interactionHud, setInteractionHud] = useState<InteractionHudState | null>(null);
+  const [previewReady, setPreviewReady] = useState(false);
+  const [posterFrame, setPosterFrame] = useState<string | null>(null);
+  const [showPoster, setShowPoster] = useState(true);
 
   const storageKey = useMemo(() => `cloudstream:resume:${fileId}`, [fileId]);
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
@@ -161,6 +169,14 @@ export function VideoPlayer({
 
       if (interactionHudTimeoutRef.current) {
         window.clearTimeout(interactionHudTimeoutRef.current);
+      }
+
+      if (previewSeekFrameRef.current) {
+        window.cancelAnimationFrame(previewSeekFrameRef.current);
+      }
+
+      if (hoverFrameRef.current) {
+        window.cancelAnimationFrame(hoverFrameRef.current);
       }
     };
   }, []);
@@ -252,8 +268,12 @@ export function VideoPlayer({
     }
 
     seekTo(videoRef.current.currentTime + amount);
-    setGestureHud(`${amount > 0 ? "+" : ""}${amount}s`);
-    window.setTimeout(() => setGestureHud(null), 700);
+
+    if (amount > 0) {
+      setInteractionHud("+10s");
+    } else {
+      setInteractionHud("-10s");
+    }
   }, [seekTo]);
 
   const resumePlayback = () => {
@@ -314,9 +334,9 @@ export function VideoPlayer({
   };
 
   const toggleFullscreen = async () => {
-    const media = videoRef.current;
+    const playerShell = playerShellRef.current;
 
-    if (!media) {
+    if (!playerShell) {
       return;
     }
 
@@ -325,7 +345,7 @@ export function VideoPlayer({
       return;
     }
 
-    await media.requestFullscreen().catch(() => undefined);
+    await playerShell.requestFullscreen().catch(() => undefined);
   };
 
   const updatePreviewFrame = (time: number) => {
@@ -335,12 +355,30 @@ export function VideoPlayer({
       return;
     }
 
-    if (lastPreviewRequestRef.current !== null && Math.abs(lastPreviewRequestRef.current - time) < 0.9) {
+    if (lastPreviewRequestRef.current !== null && Math.abs(lastPreviewRequestRef.current - time) < 0.18) {
+      return;
+    }
+
+    if (!previewReady || previewVideo.readyState < 2) {
       return;
     }
 
     lastPreviewRequestRef.current = time;
-    previewVideo.currentTime = time;
+    pendingPreviewTimeRef.current = time;
+
+    if (previewSeekFrameRef.current !== null) {
+      return;
+    }
+
+    previewSeekFrameRef.current = window.requestAnimationFrame(() => {
+      previewSeekFrameRef.current = null;
+
+      if (!previewVideoRef.current || pendingPreviewTimeRef.current === null) {
+        return;
+      }
+
+      previewVideoRef.current.currentTime = pendingPreviewTimeRef.current;
+    });
   };
 
   const drawPreviewFrame = () => {
@@ -362,33 +400,69 @@ export function VideoPlayer({
     }
 
     context.drawImage(previewVideo, 0, 0, canvas.width, canvas.height);
+    const nextImage = canvas.toDataURL("image/jpeg", 0.45);
+
+    if (!posterFrame) {
+      setPosterFrame(nextImage);
+    }
+
     setPreview((currentValue) =>
       currentValue
         ? {
             ...currentValue,
-            image: canvas.toDataURL("image/jpeg", 0.45),
+            image: nextImage,
           }
         : currentValue
     );
   };
 
-  const updatePreviewFromClientX = (clientX: number) => {
-    if (!timelineRef.current || duration <= 0) {
-      setPreview(null);
+  const capturePosterFrame = () => {
+    const previewVideo = previewVideoRef.current;
+
+    if (!previewVideo || previewVideo.videoWidth === 0 || previewVideo.videoHeight === 0) {
       return;
     }
 
-    const bounds = timelineRef.current.getBoundingClientRect();
-    const relativeX = clamp(clientX - bounds.left, 0, bounds.width);
-    const ratio = bounds.width ? relativeX / bounds.width : 0;
-    const nextTime = ratio * duration;
+    const canvas = previewCanvasRef.current ?? document.createElement("canvas");
+    previewCanvasRef.current = canvas;
+    canvas.width = 128;
+    canvas.height = 72;
 
-    setPreview({
-      image: preview?.image ?? null,
-      time: nextTime,
-      x: relativeX,
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      return;
+    }
+
+    context.drawImage(previewVideo, 0, 0, canvas.width, canvas.height);
+    setPosterFrame(canvas.toDataURL("image/jpeg", 0.45));
+  };
+
+  const updatePreviewFromClientX = (clientX: number) => {
+    if (hoverFrameRef.current !== null) {
+      window.cancelAnimationFrame(hoverFrameRef.current);
+    }
+
+    hoverFrameRef.current = window.requestAnimationFrame(() => {
+      hoverFrameRef.current = null;
+
+      if (!timelineRef.current || duration <= 0) {
+        setPreview(null);
+        return;
+      }
+
+      const bounds = timelineRef.current.getBoundingClientRect();
+      const relativeX = clamp(clientX - bounds.left, 0, bounds.width);
+      const ratio = bounds.width ? relativeX / bounds.width : 0;
+      const nextTime = ratio * duration;
+
+      setPreview({
+        image: preview?.image ?? posterFrame ?? null,
+        time: nextTime,
+        x: relativeX,
+      });
+      updatePreviewFrame(nextTime);
     });
-    updatePreviewFrame(nextTime);
   };
 
   const seekFromClientX = useCallback((clientX: number) => {
@@ -644,7 +718,10 @@ export function VideoPlayer({
         </div>
       ) : null}
 
-      <div className="relative overflow-hidden rounded-[1.8rem] border border-white/12 bg-[#080c17] shadow-[0_32px_90px_-40px_rgba(3,7,18,0.85)]">
+      <div
+        ref={playerShellRef}
+        className="video-player-shell relative overflow-hidden rounded-[1.8rem] border border-white/12 bg-[#080c17] shadow-[0_32px_90px_-40px_rgba(3,7,18,0.85)] transition-[border-radius,transform,box-shadow] duration-300 ease-out"
+      >
         {ambientFrame ? (
           <div
             className="pointer-events-none absolute inset-0 scale-110 opacity-60 blur-3xl"
@@ -676,14 +753,31 @@ export function VideoPlayer({
               <div className="rounded-full border border-white/12 bg-black/34 p-5 text-white shadow-2xl backdrop-blur-xl">
                 {interactionHud === "play" ? (
                   <PlayIcon className="size-7" />
-                ) : (
+                ) : interactionHud === "pause" ? (
                   <PauseIcon className="size-7" />
+                ) : (
+                  <div className="min-w-14 text-center text-lg font-semibold tracking-tight">
+                    {interactionHud}
+                  </div>
                 )}
               </div>
             </div>
           ) : null}
 
           <div className="group relative">
+            {showPoster && posterFrame ? (
+              <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[1.6rem] bg-slate-950">
+                <Image
+                  alt={fileName ?? "Video poster"}
+                  className="h-full w-full object-contain opacity-95 transition-opacity duration-300"
+                  fill
+                  sizes="100vw"
+                  src={posterFrame}
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(8,12,23,0.25)_100%)]" />
+              </div>
+            ) : null}
             <video
               ref={videoRef}
               className="block h-auto max-h-[72vh] w-full rounded-[1.6rem] object-contain"
@@ -714,6 +808,7 @@ export function VideoPlayer({
                 setPlaybackError(reason);
               }}
               onLoadedMetadata={handleLoadedMetadata}
+              onLoadedData={() => setShowPoster(false)}
               onPause={() => {
                 setIsPlaying(false);
                 persistPlayback();
@@ -742,6 +837,14 @@ export function VideoPlayer({
               playsInline
               preload="auto"
               src={src}
+              onLoadedData={() => {
+                setPreviewReady(true);
+                capturePosterFrame();
+              }}
+              onLoadedMetadata={() => {
+                setPreviewReady(true);
+                capturePosterFrame();
+              }}
               onSeeked={drawPreviewFrame}
             />
 
@@ -790,8 +893,8 @@ export function VideoPlayer({
                             width={128}
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-[0.24em] text-white/35">
-                            Loading
+                          <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(110deg,rgba(255,255,255,0.04)_8%,rgba(255,255,255,0.14)_18%,rgba(255,255,255,0.04)_33%)] bg-[length:200%_100%] animate-[shimmer_1.35s_linear_infinite] text-[10px] uppercase tracking-[0.24em] text-white/35">
+                            Preview
                           </div>
                         )}
                       </div>

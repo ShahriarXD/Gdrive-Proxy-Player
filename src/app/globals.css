@@ -293,8 +293,93 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes dialog-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-spring-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 26px)) scale(0.96);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 5px)) scale(1.012);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-spring-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 14px)) scale(0.985);
+  }
+}
+
 .animate-slide-up-fade {
   animation: slide-up-fade 0.7s ease both;
+}
+
+.dialog-overlay-spring[data-state="open"] {
+  animation: dialog-overlay-in 180ms ease-out both;
+}
+
+.dialog-overlay-spring[data-state="closed"] {
+  animation: dialog-overlay-out 140ms ease-in both;
+}
+
+.dialog-content-spring[data-state="open"] {
+  animation: dialog-spring-in 260ms cubic-bezier(0.18, 0.92, 0.24, 1.12) both;
+}
+
+.dialog-content-spring[data-state="closed"] {
+  animation: dialog-spring-out 160ms ease-in both;
+}
+
+.video-player-shell:fullscreen {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.video-player-shell:fullscreen video {
+  max-height: 100vh;
 }
 
 html[data-theater-mode="true"] [data-app-shell="true"] {
@@ -317,6 +402,13 @@ html[data-theater-mode="true"] [data-app-shell="true"] {
     animation: none !important;
     transition: none !important;
     transform: none !important;
+  }
+
+  .dialog-overlay-spring[data-state="open"],
+  .dialog-overlay-spring[data-state="closed"],
+  .dialog-content-spring[data-state="open"],
+  .dialog-content-spring[data-state="closed"] {
+    animation: none !important;
   }
 
   html[data-theater-mode="true"] [data-app-shell="true"] {

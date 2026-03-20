@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BellIcon,
   ChevronRightIcon,
@@ -16,6 +18,8 @@ import {
 import Image from "next/image";
 import type { Route } from "next";
 import Link from "next/link";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { DriveToolbar } from "@/components/cloudstream/drive-toolbar";
@@ -24,17 +28,17 @@ import { VideoPlayerDialog } from "@/components/cloudstream/video-player-dialog"
 import { Button } from "@/components/ui/button";
 import type { DeskStatus } from "@/lib/desk-status";
 import {
+  type DriveItem,
+  type DriveStorageStatus,
+  isFolder,
+  isVideoFile,
+  type DriveView,
+} from "@/lib/drive-shared";
+import {
   formatBytes,
   formatDate,
   formatFileName,
 } from "@/lib/utils";
-import {
-  type DriveStorageStatus,
-  isFolder,
-  isVideoFile,
-  type DriveItem,
-  type DriveView,
-} from "@/lib/google-drive";
 
 type Breadcrumb = {
   id: string;
@@ -139,9 +143,12 @@ export function DriveDashboard({
   userName,
   videosOnly,
 }: DriveDashboardProps) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const view = viewMeta[currentView];
   const recentItems = items.slice(0, 5);
   const firstName = userName.split(" ")[0] || "Rafin";
+  const [activeVideo, setActiveVideo] = useState<DriveItem | null>(selectedVideo);
   const usage = storageStatus?.usage ? Number(storageStatus.usage) : null;
   const limit = storageStatus?.limit ? Number(storageStatus.limit) : null;
   const usageRatio = usage && limit ? Math.round((usage / limit) * 100) : null;
@@ -162,6 +169,36 @@ export function DriveDashboard({
       value: "Streaming proxy online",
     },
   ];
+
+  useEffect(() => {
+    setActiveVideo(selectedVideo);
+  }, [selectedVideo]);
+
+  const syncVideoInUrl = (videoId?: string) => {
+    const nextHref = buildHref(
+      currentView,
+      {
+        folderId: currentFolderId,
+        videoId,
+      },
+      currentQuery,
+      videosOnly
+    );
+
+    startTransition(() => {
+      router.replace(nextHref, { scroll: false });
+    });
+  };
+
+  const openVideo = (item: DriveItem) => {
+    setActiveVideo(item);
+    syncVideoInUrl(item.id);
+  };
+
+  const closeVideo = () => {
+    setActiveVideo(null);
+    syncVideoInUrl(undefined);
+  };
 
   return (
     <>
@@ -450,17 +487,23 @@ export function DriveDashboard({
                         </p>
                         <p className="mt-1 text-sm text-muted-foreground">{formatBytes(item.size)}</p>
                         <div className="mt-5">
-                          <Button asChild className="w-full" variant={isVideoFile(item) ? "default" : "secondary"}>
-                            {external ? (
-                              <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
-                                Open file
-                              </a>
-                            ) : (
-                              <Link href={internalHref ?? "/"}>
-                                {isFolder(item) ? "Open folder" : isVideoFile(item) ? "Play video" : "Open file"}
-                              </Link>
-                            )}
-                          </Button>
+                          {isVideoFile(item) ? (
+                            <Button className="w-full" onClick={() => openVideo(item)} variant="default">
+                              Play video
+                            </Button>
+                          ) : (
+                            <Button asChild className="w-full" variant="secondary">
+                              {external ? (
+                                <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
+                                  Open file
+                                </a>
+                              ) : (
+                                <Link href={internalHref ?? "/"}>
+                                  Open folder
+                                </Link>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       </article>
                     );
@@ -528,17 +571,23 @@ export function DriveDashboard({
                                 <span>{formatBytes(item.size)}</span>
                               </div>
                               <div className="mt-4">
-                                <Button asChild size="sm" variant={isVideoFile(item) ? "default" : "outline"}>
-                                  {external ? (
-                                    <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
-                                      Open
-                                    </a>
-                                  ) : (
-                                    <Link href={internalHref ?? "/"}>
-                                      {isFolder(item) ? "Open folder" : isVideoFile(item) ? "Play video" : "Open"}
-                                    </Link>
-                                  )}
-                                </Button>
+                                {isVideoFile(item) ? (
+                                  <Button onClick={() => openVideo(item)} size="sm" variant="default">
+                                    Play video
+                                  </Button>
+                                ) : (
+                                  <Button asChild size="sm" variant="outline">
+                                    {external ? (
+                                      <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
+                                        Open
+                                      </a>
+                                    ) : (
+                                      <Link href={internalHref ?? "/"}>
+                                        Open folder
+                                      </Link>
+                                    )}
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -598,17 +647,23 @@ export function DriveDashboard({
                           <div className="text-sm text-muted-foreground">{formatDate(item.modifiedTime)}</div>
                           <div className="text-sm text-muted-foreground">{formatBytes(item.size)}</div>
                           <div className="flex justify-end">
-                            <Button asChild size="sm" variant={isVideoFile(item) ? "default" : "outline"}>
-                              {external ? (
-                                <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
-                                  Open
-                                </a>
-                              ) : (
-                                <Link href={internalHref ?? "/"}>
-                                  {isFolder(item) ? "Open" : isVideoFile(item) ? "Play" : "Open"}
-                                </Link>
-                              )}
-                            </Button>
+                            {isVideoFile(item) ? (
+                              <Button onClick={() => openVideo(item)} size="sm" variant="default">
+                                Play
+                              </Button>
+                            ) : (
+                              <Button asChild size="sm" variant="outline">
+                                {external ? (
+                                  <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
+                                    Open
+                                  </a>
+                                ) : (
+                                  <Link href={internalHref ?? "/"}>
+                                    Open
+                                  </Link>
+                                )}
+                              </Button>
+                            )}
                           </div>
                         </div>
                       );
@@ -636,10 +691,16 @@ export function DriveDashboard({
       </main>
 
       <VideoPlayerDialog
-        fileId={selectedVideo?.id}
-        fileName={selectedVideo?.name}
-        fileSize={selectedVideo?.size}
-        mimeType={selectedVideo?.mimeType}
+        fileId={activeVideo?.id}
+        fileName={activeVideo?.name}
+        fileSize={activeVideo?.size}
+        mimeType={activeVideo?.mimeType}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            closeVideo();
+          }
+        }}
+        open={Boolean(activeVideo)}
       />
     </>
   );

@@ -2,14 +2,13 @@ import { auth } from "@/auth";
 import { DriveDashboard } from "@/components/cloudstream/drive-dashboard";
 import { LandingPanel } from "@/components/cloudstream/landing-panel";
 import { getDeskStatus } from "@/lib/desk-status";
+import { isVideoFile, type DriveView } from "@/lib/drive-shared";
 import { hasAuthEnv } from "@/lib/env";
 import {
   getDriveFileMetadata,
   getFolderBreadcrumbs,
   getDriveStorageStatus,
-  isVideoFile,
   listDriveItems,
-  type DriveView,
 } from "@/lib/google-drive";
 
 type SearchParamValue = string | string[] | undefined;

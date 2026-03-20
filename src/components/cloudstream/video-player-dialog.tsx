@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-
 import {
   Dialog,
   DialogContent,
@@ -12,35 +10,24 @@ import {
 import { VideoPlayer } from "@/components/cloudstream/video-player";
 
 type VideoPlayerDialogProps = {
+  open: boolean;
   fileId?: string;
   fileName?: string;
   fileSize?: string;
   mimeType?: string;
+  onOpenChange: (open: boolean) => void;
 };
 
 export function VideoPlayerDialog({
+  open,
   fileId,
   fileName,
   fileSize,
   mimeType,
+  onOpenChange,
 }: VideoPlayerDialogProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const open = Boolean(fileId);
-
   return (
-    <Dialog
-      onOpenChange={(nextOpen) => {
-        if (nextOpen) {
-          return;
-        }
-
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete("videoId");
-        router.push(params.toString() ? `/?${params.toString()}` : "/");
-      }}
-      open={open}
-    >
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="overflow-hidden p-0">
         <DialogHeader className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/80 px-6 py-5 backdrop-blur-xl">
           <DialogTitle>{fileName ?? "Video stream"}</DialogTitle>
