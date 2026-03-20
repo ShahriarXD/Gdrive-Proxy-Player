@@ -1,8 +1,11 @@
-const AUTH_ENV_NAMES = [
-  "NEXTAUTH_URL",
+const REQUIRED_AUTH_ENV_NAMES = [
   "NEXTAUTH_SECRET",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
+] as const;
+
+const OPTIONAL_AUTH_ENV_NAMES = [
+  "NEXTAUTH_URL",
 ] as const;
 
 export function getEnv(name: string) {
@@ -10,9 +13,13 @@ export function getEnv(name: string) {
 }
 
 export function hasAuthEnv() {
-  return AUTH_ENV_NAMES.every((name) => Boolean(process.env[name]));
+  return REQUIRED_AUTH_ENV_NAMES.every((name) => Boolean(process.env[name]));
 }
 
 export function getMissingAuthEnv() {
-  return AUTH_ENV_NAMES.filter((name) => !process.env[name]);
+  return REQUIRED_AUTH_ENV_NAMES.filter((name) => !process.env[name]);
+}
+
+export function getMissingOptionalAuthEnv() {
+  return OPTIONAL_AUTH_ENV_NAMES.filter((name) => !process.env[name]);
 }

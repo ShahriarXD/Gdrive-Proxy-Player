@@ -3,7 +3,11 @@ import { DriveDashboard } from "@/components/cloudstream/drive-dashboard";
 import { LandingPanel } from "@/components/cloudstream/landing-panel";
 import { getDeskStatus } from "@/lib/desk-status";
 import { isVideoFile, type DriveView } from "@/lib/drive-shared";
-import { getMissingAuthEnv, hasAuthEnv } from "@/lib/env";
+import {
+  getMissingAuthEnv,
+  getMissingOptionalAuthEnv,
+  hasAuthEnv,
+} from "@/lib/env";
 import {
   getDriveFileMetadata,
   getFolderBreadcrumbs,
@@ -26,6 +30,7 @@ function getSingleValue(value: SearchParamValue) {
 export default async function HomePage({ searchParams }: HomePageProps) {
   const authReady = hasAuthEnv();
   const missingAuthEnv = getMissingAuthEnv();
+  const missingOptionalAuthEnv = getMissingOptionalAuthEnv();
   const deskStatus = await getDeskStatus();
 
   if (!authReady) {
@@ -33,7 +38,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <LandingPanel
         authReady={false}
         deskStatus={deskStatus}
-        errorMessage={`Missing auth env vars: ${missingAuthEnv.join(", ")}`}
+        errorMessage={[
+          `Missing required auth env vars: ${missingAuthEnv.join(", ")}`,
+          missingOptionalAuthEnv.length
+            ? `Optional but recommended on custom domains: ${missingOptionalAuthEnv.join(", ")}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" | ")}
       />
     );
   }
