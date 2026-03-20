@@ -4,12 +4,14 @@ import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const sans = Plus_Jakarta_Sans({
-  variable: "--font-sans",
+  display: "swap",
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
 });
 
 const mono = JetBrains_Mono({
-  variable: "--font-mono",
+  display: "swap",
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -26,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${mono.variable} min-h-screen antialiased`}>
+      <body className={`${sans.variable} ${mono.variable} min-h-screen font-sans antialiased`}>
         {children}
       </body>
     </html>

@@ -33,3 +33,15 @@ export function formatDate(value?: string | null) {
     timeStyle: "short",
   }).format(new Date(value));
 }
+
+export function formatFileName(value?: string | null) {
+  if (!value) {
+    return "Untitled";
+  }
+
+  try {
+    return decodeURIComponent(value.replace(/\+/g, " ")).trim();
+  } catch {
+    return value.replace(/\+/g, " ").trim();
+  }
+}

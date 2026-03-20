@@ -22,13 +22,13 @@ export function LandingPanel({
   return (
     <main className="relative mx-auto flex min-h-screen w-full max-w-[1500px] items-center px-6 py-10 md:px-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[8%] top-20 size-40 rounded-full bg-blue-400/20 blur-3xl" />
-        <div className="absolute right-[10%] top-[18%] size-56 rounded-full bg-cyan-300/20 blur-3xl" />
-        <div className="absolute bottom-16 left-[34%] size-64 rounded-full bg-violet-300/20 blur-3xl" />
+        <div className="absolute left-[8%] top-20 size-36 rounded-full bg-blue-400/12 blur-3xl" />
+        <div className="absolute right-[10%] top-[18%] size-48 rounded-full bg-cyan-300/14 blur-3xl" />
+        <div className="absolute bottom-16 left-[34%] size-56 rounded-full bg-violet-300/12 blur-3xl" />
       </div>
 
       <div className="relative grid w-full gap-8 lg:grid-cols-[1.02fr_0.98fr]">
-        <section className="animate-slide-up-fade flex flex-col justify-between gap-8 rounded-[2.25rem] border border-white/70 bg-white/72 p-8 shadow-[0_40px_120px_-58px_rgba(50,65,120,0.38)] backdrop-blur-2xl lg:p-10">
+        <section className="premium-surface animate-slide-up-fade flex flex-col justify-between gap-8 rounded-[2.25rem] p-8 lg:p-10">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-3">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(88,105,255,1),rgba(80,195,255,0.9))] text-white shadow-[0_18px_50px_-24px_rgba(71,101,255,0.7)]">
@@ -104,11 +104,11 @@ export function LandingPanel({
 
         <section className="animate-slide-up-fade relative flex min-h-[720px] items-center justify-center delay-100">
           <div className="soft-grid absolute inset-0 rounded-[2.5rem] opacity-50" />
-          <div className="absolute inset-x-12 top-10 h-40 rounded-full bg-blue-500/10 blur-3xl" />
+          <div className="absolute inset-x-12 top-10 h-32 rounded-full bg-blue-500/8 blur-3xl" />
           <div className="floating-card relative w-full max-w-[640px]">
-            <div className="absolute -left-10 top-16 h-[82%] w-full rounded-[2rem] bg-white/45 blur-md" />
-            <div className="absolute -right-6 top-10 h-[86%] w-full rounded-[2rem] bg-[linear-gradient(180deg,rgba(93,108,255,0.16),rgba(85,211,255,0.08))] blur-sm" />
-            <div className="relative overflow-hidden rounded-[2.25rem] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(247,249,255,0.86))] p-5 shadow-[0_42px_120px_-55px_rgba(52,73,140,0.45)]">
+            <div className="absolute -left-8 top-16 h-[82%] w-full rounded-[2rem] bg-white/36 blur-sm" />
+            <div className="absolute -right-4 top-10 h-[86%] w-full rounded-[2rem] bg-[linear-gradient(180deg,rgba(93,108,255,0.12),rgba(85,211,255,0.04))] blur-sm" />
+            <div className="premium-surface relative rounded-[2.25rem] p-5">
               <div className="mb-4 flex items-center justify-between rounded-[1.75rem] border border-white/80 bg-white/88 px-4 py-3">
                 <div className="flex items-center gap-3">
                   <div className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(89,108,255,1),rgba(75,198,255,0.9))] text-white">

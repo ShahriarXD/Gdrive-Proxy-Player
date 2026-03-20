@@ -2,7 +2,7 @@
 
 import { SearchIcon, SlidersHorizontalIcon, VideoIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,9 @@ export function DriveToolbar({ defaultQuery, videosOnly }: DriveToolbarProps) {
     }
 
     params.delete("videoId");
-    router.push(`/?${params.toString()}`);
+    startTransition(() => {
+      router.push(`/?${params.toString()}`);
+    });
   };
 
   return (
@@ -59,12 +61,16 @@ export function DriveToolbar({ defaultQuery, videosOnly }: DriveToolbarProps) {
         </Button>
       </form>
 
-      <div className="flex items-center gap-3">
-        <Button onClick={() => updateSearch(query, !videosOnly)} variant={videosOnly ? "default" : "outline"}>
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
+        <Button
+          className="min-w-[136px]"
+          onClick={() => updateSearch(query, !videosOnly)}
+          variant={videosOnly ? "default" : "outline"}
+        >
           <VideoIcon className="size-4" />
           {videosOnly ? "Videos only" : "Show videos"}
         </Button>
-        <Button variant="outline">
+        <Button className="min-w-[116px]" variant="outline">
           <SlidersHorizontalIcon className="size-4" />
           Filters
         </Button>

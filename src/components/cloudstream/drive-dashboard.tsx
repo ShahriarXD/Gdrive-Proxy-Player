@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import {
   formatBytes,
   formatDate,
+  formatFileName,
 } from "@/lib/utils";
 import {
   isFolder,
@@ -134,14 +135,14 @@ export function DriveDashboard({
 
   return (
     <>
-      <main className="mx-auto grid min-h-screen w-full max-w-[1680px] gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <main className="mx-auto grid min-h-screen w-full max-w-[1680px] gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="sidebar-shadow hidden min-h-[calc(100vh-2rem)] shrink-0 rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(249,250,255,0.72))] p-5 lg:flex lg:flex-col lg:gap-6">
           <div className="flex items-center gap-3 rounded-[1.6rem] px-2 py-2">
             <div className="flex size-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,185,255,0.92))] text-white shadow-[0_18px_50px_-24px_rgba(67,97,255,0.72)]">
               <SearchIcon className="size-5" />
             </div>
             <div>
-              <p className="text-[2rem] font-semibold tracking-[-0.05em] text-foreground">CloudStream</p>
+              <p className="text-[1.6rem] font-semibold tracking-[-0.05em] text-foreground xl:text-[2rem]">CloudStream</p>
               <p className="text-sm text-muted-foreground">Drive workspace by KM</p>
             </div>
           </div>
@@ -213,7 +214,7 @@ export function DriveDashboard({
           </div>
         </aside>
 
-        <section className="min-w-0 rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(248,249,253,0.78))] p-4 md:p-6">
+        <section className="min-w-0 rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(248,249,253,0.88))] p-4 md:p-6">
           <header className="topbar-shadow glass-panel rounded-[1.9rem] p-4 md:p-5">
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between gap-4">
@@ -323,7 +324,7 @@ export function DriveDashboard({
 
           <div className="mt-6 space-y-6">
             {recentItems.length ? (
-              <section className="glass-panel rounded-[1.9rem] p-5 md:p-6">
+              <section className="glass-panel section-enter rounded-[1.9rem] p-5 md:p-6">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">Recently used</h3>
@@ -366,7 +367,7 @@ export function DriveDashboard({
 
                     return (
                       <article
-                        className="group rounded-[1.6rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(246,248,253,0.9))] p-4 shadow-[0_24px_60px_-40px_rgba(61,74,126,0.34)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_34px_90px_-46px_rgba(61,74,126,0.42)]"
+                        className="premium-surface micro-lift group rounded-[1.6rem] p-4"
                         key={item.id}
                       >
                         <div className="mb-5 flex items-center justify-between">
@@ -377,7 +378,7 @@ export function DriveDashboard({
                             <MoreHorizontalIcon className="size-4" />
                           </button>
                         </div>
-                        <h4 className="line-clamp-2 text-base font-semibold text-foreground">{item.name}</h4>
+                        <h4 className="line-clamp-2 text-base font-semibold text-foreground">{formatFileName(item.name)}</h4>
                         <p className="mt-2 text-sm text-muted-foreground">
                           {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video file" : item.mimeType}
                         </p>
@@ -402,7 +403,7 @@ export function DriveDashboard({
               </section>
             ) : null}
 
-            <section className="glass-panel rounded-[1.9rem] p-5 md:p-6">
+            <section className="glass-panel section-enter rounded-[1.9rem] p-5 md:p-6">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">All files</h3>
@@ -419,7 +420,68 @@ export function DriveDashboard({
               </div>
 
               {items.length ? (
-                <div className="overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/82">
+                <>
+                  <div className="space-y-3 md:hidden">
+                    {items.map((item) => {
+                      const Icon = getItemIcon(item);
+                      const displayName = formatFileName(item.name);
+                      const internalHref = isFolder(item)
+                        ? buildHref(
+                            currentView,
+                            { folderId: item.id, videoId: undefined },
+                            currentQuery,
+                            videosOnly
+                          )
+                        : isVideoFile(item)
+                          ? buildHref(
+                              currentView,
+                              {
+                                folderId: currentFolderId,
+                                videoId: item.id,
+                              },
+                              currentQuery,
+                              videosOnly
+                            )
+                          : null;
+                      const externalHref = !internalHref ? item.webViewLink ?? "#" : null;
+                      const external = !isFolder(item) && !isVideoFile(item);
+
+                      return (
+                        <article className="premium-surface rounded-[1.5rem] p-4" key={item.id}>
+                          <div className="flex items-start gap-4">
+                            <div className="flex size-14 shrink-0 items-center justify-center rounded-[1.4rem] bg-slate-50 text-primary">
+                              <Icon className="size-5" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-base font-semibold text-foreground">{displayName}</p>
+                              <p className="mt-1 text-sm text-muted-foreground">
+                                {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video" : item.mimeType}
+                              </p>
+                              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                <span>{formatDate(item.modifiedTime)}</span>
+                                <span>{formatBytes(item.size)}</span>
+                              </div>
+                              <div className="mt-4">
+                                <Button asChild size="sm" variant={isVideoFile(item) ? "default" : "outline"}>
+                                  {external ? (
+                                    <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
+                                      Open
+                                    </a>
+                                  ) : (
+                                    <Link href={internalHref ?? "/"}>
+                                      {isFolder(item) ? "Open folder" : isVideoFile(item) ? "Play video" : "Open"}
+                                    </Link>
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+
+                  <div className="hidden overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/82 md:block">
                   <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] gap-4 border-b border-slate-100 px-5 py-4 text-sm font-medium text-muted-foreground">
                     <span>Name</span>
                     <span>Last modified</span>
@@ -428,65 +490,66 @@ export function DriveDashboard({
                   </div>
                   <div>
                     {items.map((item) => {
-                  const Icon = getItemIcon(item);
-                  const internalHref = isFolder(item)
-                    ? buildHref(
-                        currentView,
-                        { folderId: item.id, videoId: undefined },
-                        currentQuery,
-                        videosOnly
-                      )
-                    : isVideoFile(item)
-                      ? buildHref(
-                          currentView,
-                          {
-                            folderId: currentFolderId,
-                            videoId: item.id,
-                          },
-                          currentQuery,
-                          videosOnly
-                        )
-                      : null;
-                  const externalHref = !internalHref ? item.webViewLink ?? "#" : null;
+                      const Icon = getItemIcon(item);
+                      const displayName = formatFileName(item.name);
+                      const internalHref = isFolder(item)
+                        ? buildHref(
+                            currentView,
+                            { folderId: item.id, videoId: undefined },
+                            currentQuery,
+                            videosOnly
+                          )
+                        : isVideoFile(item)
+                          ? buildHref(
+                              currentView,
+                              {
+                                folderId: currentFolderId,
+                                videoId: item.id,
+                              },
+                              currentQuery,
+                              videosOnly
+                            )
+                          : null;
+                      const externalHref = !internalHref ? item.webViewLink ?? "#" : null;
+                      const external = !isFolder(item) && !isVideoFile(item);
 
-                  const external = !isFolder(item) && !isVideoFile(item);
-
-                  return (
-                    <div
-                      className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] items-center gap-4 border-t border-slate-100 px-5 py-4 transition hover:bg-slate-50/80"
-                      key={item.id}
-                    >
-                      <div className="flex min-w-0 items-center gap-4">
-                        <div className="flex size-11 items-center justify-center rounded-2xl bg-slate-100 text-primary">
-                          <Icon className="size-4" />
+                      return (
+                        <div
+                          className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] items-center gap-4 border-t border-slate-100 px-5 py-4 transition hover:bg-slate-50/80"
+                          key={item.id}
+                        >
+                          <div className="flex min-w-0 items-center gap-4">
+                            <div className="flex size-11 items-center justify-center rounded-2xl bg-slate-50 text-primary">
+                              <Icon className="size-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-semibold text-foreground">{displayName}</p>
+                              <p className="mt-1 text-sm text-muted-foreground">
+                                {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video" : item.mimeType}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-sm text-muted-foreground">{formatDate(item.modifiedTime)}</div>
+                          <div className="text-sm text-muted-foreground">{formatBytes(item.size)}</div>
+                          <div className="flex justify-end">
+                            <Button asChild size="sm" variant={isVideoFile(item) ? "default" : "outline"}>
+                              {external ? (
+                                <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
+                                  Open
+                                </a>
+                              ) : (
+                                <Link href={internalHref ?? "/"}>
+                                  {isFolder(item) ? "Open" : isVideoFile(item) ? "Play" : "Open"}
+                                </Link>
+                              )}
+                            </Button>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-foreground">{item.name}</p>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video" : item.mimeType}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-sm text-muted-foreground">{formatDate(item.modifiedTime)}</div>
-                      <div className="text-sm text-muted-foreground">{formatBytes(item.size)}</div>
-                      <div className="flex justify-end">
-                        <Button asChild size="sm" variant={isVideoFile(item) ? "default" : "outline"}>
-                          {external ? (
-                            <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
-                              Open
-                            </a>
-                          ) : (
-                            <Link href={internalHref ?? "/"}>
-                              {isFolder(item) ? "Open" : isVideoFile(item) ? "Play" : "Open"}
-                            </Link>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  );
+                      );
                     })}
                   </div>
-                </div>
+                  </div>
+                </>
               ) : (
                 <div className="flex min-h-80 flex-col items-center justify-center gap-4 rounded-[1.75rem] border border-dashed border-border bg-white/50 px-6 text-center">
                   <MonitorPlayIcon className="size-10 text-muted-foreground" />
