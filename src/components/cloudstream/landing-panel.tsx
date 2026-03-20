@@ -48,14 +48,14 @@ export function LandingPanel({
           <div className="max-w-2xl space-y-5">
             <div className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-800 shadow-lg">
               <SparklesIcon className="size-4 text-cyan-300" />
-              Premium cloud workspace
+              CloudStream by KM
             </div>
             <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-foreground md:text-7xl">
-              Continue with Google and open your private streaming desk.
+              Browse, search, and stream your own Google Drive files in one workspace.
             </h1>
             <p className="max-w-xl text-base leading-8 text-muted-foreground md:text-lg">
-              Browse your Drive like a premium media library, search with desktop-style
-              precision, and stream instantly through a Vercel-friendly proxy.
+              CloudStream by KM is a private Google Drive viewer built for folder
+              browsing, search, and smooth video playback from files you already own.
             </p>
           </div>
 
@@ -64,8 +64,47 @@ export function LandingPanel({
           <div className="flex flex-wrap items-center gap-3">
             <GoogleSignInButton />
             <p className="text-sm text-muted-foreground">
-              One tap gets you into CloudStream with official Google sign-in.
+              Sign in with Google to connect your own Drive and open the full app.
             </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="liquid-glass rounded-[1.75rem] p-5">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                What CloudStream Does
+              </p>
+              <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
+                <p>
+                  CloudStream gives you a cleaner interface for browsing Google Drive
+                  folders, searching file names, opening supported files, and streaming
+                  Drive videos in a custom player.
+                </p>
+                <p>
+                  The homepage is public and visible before sign-in so users can
+                  understand the product, review the privacy policy, and decide whether
+                  to connect Google Drive.
+                </p>
+              </div>
+            </div>
+
+            <div className="liquid-glass rounded-[1.75rem] p-5">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                Why Google Data Is Requested
+              </p>
+              <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
+                <p>CloudStream requests Google account and Google Drive read-only access only to:</p>
+                <ul className="list-disc space-y-2 pl-5">
+                  <li>Authenticate you with your Google account.</li>
+                  <li>Show your Drive folders, file names, file types, sizes, and structure.</li>
+                  <li>Stream supported video files you choose to play.</li>
+                  <li>Display your name, email, and profile image inside your session.</li>
+                </ul>
+                <p>
+                  CloudStream does not request permission to create, edit, or delete
+                  your Google Drive files.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -99,6 +138,9 @@ export function LandingPanel({
             <Link className="glass-pill glass-hover rounded-full px-4 py-2" href="/terms-of-service">
               Terms of Service
             </Link>
+            <p className="text-sm text-muted-foreground">
+              Public legal pages are available before login.
+            </p>
           </div>
         </section>
 
