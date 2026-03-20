@@ -22,7 +22,7 @@ export function LocalDeskWidget({ initialStatus }: LocalDeskWidgetProps) {
 
   const formattedTime = useMemo(
     () =>
-      new Intl.DateTimeFormat(undefined, {
+      new Intl.DateTimeFormat("en-US", {
         dateStyle: "medium",
         timeStyle: "short",
         timeZone: initialStatus.timezone,
