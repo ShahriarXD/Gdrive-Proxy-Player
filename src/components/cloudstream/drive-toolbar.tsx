@@ -2,7 +2,7 @@
 
 import { SearchIcon, SlidersHorizontalIcon, VideoIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,11 +17,17 @@ export function DriveToolbar({ defaultQuery, videosOnly }: DriveToolbarProps) {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(defaultQuery);
 
+  useEffect(() => {
+    setQuery(defaultQuery);
+  }, [defaultQuery]);
+
   const updateSearch = (nextQuery: string, nextVideosOnly: boolean) => {
     const params = new URLSearchParams(searchParams.toString());
+    const normalizedQuery = nextQuery.trim();
 
-    if (nextQuery) {
-      params.set("q", nextQuery);
+    if (normalizedQuery) {
+      params.set("q", normalizedQuery);
+      params.delete("folderId");
     } else {
       params.delete("q");
     }

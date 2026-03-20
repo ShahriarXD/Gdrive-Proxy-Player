@@ -5,17 +5,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "hover-sheen inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         default:
-          "bg-[linear-gradient(135deg,#5b67ff_0%,#649dff_100%)] text-primary-foreground shadow-[0_16px_40px_-22px_rgba(63,91,255,0.55)] hover:-translate-y-0.5 hover:shadow-[0_20px_46px_-24px_rgba(63,91,255,0.58)]",
+          "border border-white/30 bg-[linear-gradient(180deg,rgba(98,113,255,0.96),rgba(92,162,255,0.88))] text-primary-foreground shadow-[0_18px_44px_-22px_rgba(63,91,255,0.48),inset_0_1px_0_rgba(255,255,255,0.28)] hover:-translate-y-0.5 hover:shadow-[0_22px_52px_-24px_rgba(63,91,255,0.56)]",
         secondary:
-          "border border-white/75 bg-white/92 text-secondary-foreground shadow-[0_10px_26px_-18px_rgba(74,88,138,0.18)] hover:bg-white",
+          "glass-pill text-secondary-foreground hover:-translate-y-0.5 hover:bg-white/88",
         ghost: "text-foreground hover:bg-slate-100/80",
         outline:
-          "border border-border bg-white/88 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] hover:bg-white",
+          "glass-pill text-foreground hover:-translate-y-0.5 hover:bg-white/86",
       },
       size: {
         default: "h-11 px-4.5",

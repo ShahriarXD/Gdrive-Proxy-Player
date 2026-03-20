@@ -39,10 +39,11 @@ const DEFAULT_FIELDS =
 
 function buildQuery({ folderId, query, videosOnly, view }: DriveRequestOptions) {
   const filters = ["trashed = false"];
+  const hasSearchQuery = Boolean(query?.trim());
 
-  if (folderId && folderId !== "root") {
+  if (!hasSearchQuery && folderId && folderId !== "root") {
     filters.push(`'${folderId}' in parents`);
-  } else if (view === "my-drive") {
+  } else if (!hasSearchQuery && view === "my-drive") {
     filters.push("'root' in parents");
   } else if (view === "shared") {
     filters.push("sharedWithMe = true");
@@ -50,9 +51,9 @@ function buildQuery({ folderId, query, videosOnly, view }: DriveRequestOptions) 
     filters.push("starred = true");
   }
 
-  if (query) {
-    const escaped = query.replace(/'/g, "\\'");
-    filters.push(`name contains '${escaped}'`);
+  if (hasSearchQuery) {
+    const escaped = query!.trim().replace(/'/g, "\\'");
+    filters.push(`(name contains '${escaped}' or fullText contains '${escaped}')`);
   }
 
   if (videosOnly) {

@@ -40,14 +40,14 @@ export function LandingPanel({
               </div>
             </div>
             <div className="rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              KM Edition
+              built by KM Shahriar Hossain
             </div>
           </div>
 
           <div className="max-w-2xl space-y-5">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+            <div className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-800 shadow-lg">
               <SparklesIcon className="size-4 text-cyan-300" />
-              Inspired by premium cloud productivity dashboards
+              Premium cloud productivity dashboards
             </div>
             <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-foreground md:text-7xl">
               Turn your Google Drive into a cinematic workspace.
@@ -72,21 +72,21 @@ export function LandingPanel({
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="premium-border rounded-[1.5rem] bg-white/74 p-4">
+            <div className="liquid-glass micro-lift hover-sheen rounded-[1.5rem] p-4">
               <FolderIcon className="mb-4 size-5 text-primary" />
               <p className="text-sm font-medium text-foreground">Folder-first navigation</p>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Browse Drive like a refined file system, not a raw API response.
               </p>
             </div>
-            <div className="premium-border rounded-[1.5rem] bg-white/74 p-4">
+            <div className="liquid-glass micro-lift hover-sheen rounded-[1.5rem] p-4">
               <PlayCircleIcon className="mb-4 size-5 text-cyan-500" />
               <p className="text-sm font-medium text-foreground">Instant video streaming</p>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Range-aware playback gives fast scrubbing and lightweight delivery.
               </p>
             </div>
-            <div className="premium-border rounded-[1.5rem] bg-white/74 p-4">
+            <div className="liquid-glass micro-lift hover-sheen rounded-[1.5rem] p-4">
               <ShieldCheckIcon className="mb-4 size-5 text-emerald-500" />
               <p className="text-sm font-medium text-foreground">Session-safe access</p>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -109,7 +109,7 @@ export function LandingPanel({
             <div className="absolute -left-8 top-16 h-[82%] w-full rounded-[2rem] bg-white/36 blur-sm" />
             <div className="absolute -right-4 top-10 h-[86%] w-full rounded-[2rem] bg-[linear-gradient(180deg,rgba(93,108,255,0.12),rgba(85,211,255,0.04))] blur-sm" />
             <div className="premium-surface relative rounded-[2.25rem] p-5">
-              <div className="mb-4 flex items-center justify-between rounded-[1.75rem] border border-white/80 bg-white/88 px-4 py-3">
+              <div className="liquid-glass mb-4 flex items-center justify-between rounded-[1.75rem] px-4 py-3">
                 <div className="flex items-center gap-3">
                   <div className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(89,108,255,1),rgba(75,198,255,0.9))] text-white">
                     <CloudIcon className="size-5" />
@@ -125,7 +125,7 @@ export function LandingPanel({
               </div>
 
               <div className="space-y-4">
-                <div className="topbar-shadow rounded-[1.75rem] border border-white/80 bg-white/88 p-4">
+                <div className="topbar-shadow liquid-glass rounded-[1.75rem] p-4">
                   <div className="mb-4 flex items-center gap-3">
                     <div className="h-3 w-3 rounded-full bg-rose-400" />
                     <div className="h-3 w-3 rounded-full bg-amber-300" />
@@ -134,14 +134,14 @@ export function LandingPanel({
                   <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
                     <div>
                       <p className="text-sm text-muted-foreground">Search folder or file</p>
-                      <p className="font-medium text-foreground">Blind-Date-Episode-1-Aaliyah-and-Isiah-CQIS6qU8.mp4</p>
+                      <p className="font-medium text-foreground">Car Video.mp4</p>
                     </div>
                     <Button size="sm">Search</Button>
                   </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
-                  <div className="sidebar-shadow rounded-[1.75rem] border border-white/75 bg-white/86 p-4">
+                  <div className="sidebar-shadow liquid-glass rounded-[1.75rem] p-4">
                     <div className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                       Navigation
                     </div>
@@ -156,8 +156,8 @@ export function LandingPanel({
                         <div
                           className={`rounded-2xl px-4 py-3 text-sm ${
                             index === 0
-                              ? "bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(78,150,255,0.92))] text-white shadow-lg"
-                              : "bg-slate-50 text-foreground"
+                              ? "border border-white/30 bg-[linear-gradient(180deg,rgba(99,113,255,0.92),rgba(95,158,255,0.78))] text-white shadow-[0_20px_46px_-28px_rgba(74,102,255,0.52),inset_0_1px_0_rgba(255,255,255,0.24)]"
+                              : "glass-pill text-foreground"
                           }`}
                           key={item}
                         >
@@ -168,7 +168,7 @@ export function LandingPanel({
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-[1.75rem] border border-white/75 bg-white/86 p-4">
+                    <div className="liquid-glass rounded-[1.75rem] p-4">
                       <div className="mb-4 flex items-center justify-between">
                         <p className="font-semibold">Recently used</p>
                         <p className="text-sm text-muted-foreground">7 items</p>
@@ -180,7 +180,7 @@ export function LandingPanel({
                           "NDA document",
                           "Episode file",
                         ].map((item, index) => (
-                          <div className="rounded-[1.25rem] bg-slate-50 p-3" key={item}>
+                          <div className="glass-pill glass-hover rounded-[1.25rem] p-3" key={item}>
                             <div className="mb-8 flex size-10 items-center justify-center rounded-2xl bg-white text-primary shadow-sm">
                               {index === 3 ? <VideoIcon className="size-4" /> : <FolderIcon className="size-4" />}
                             </div>
@@ -193,7 +193,7 @@ export function LandingPanel({
                       </div>
                     </div>
 
-                    <div className="rounded-[1.75rem] border border-white/75 bg-white/86 p-4">
+                    <div className="liquid-glass rounded-[1.75rem] p-4">
                       <div className="mb-3 flex items-center justify-between">
                         <p className="font-semibold">All files</p>
                         <p className="text-sm text-muted-foreground">Table view</p>
@@ -202,9 +202,9 @@ export function LandingPanel({
                         {[
                           "Financial report.xls",
                           "essay_english.docs",
-                          "Blind-Date-Episode-1-Aaliyah-and-Isiah-CQIS6qU8.mp4",
+                          "Car Video.mp4",
                         ].map((item) => (
-                          <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3 text-sm" key={item}>
+                          <div className="glass-pill glass-hover flex items-center justify-between rounded-2xl px-3 py-3 text-sm" key={item}>
                             <span className="max-w-[68%] truncate font-medium">{item}</span>
                             <span className="text-muted-foreground">Open</span>
                           </div>

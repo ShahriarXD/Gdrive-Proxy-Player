@@ -9,7 +9,6 @@ import {
   LayoutGridIcon,
   MoreHorizontalIcon,
   MonitorPlayIcon,
-  SearchIcon,
   Settings2Icon,
   StarIcon,
   UsersIcon,
@@ -135,16 +134,14 @@ export function DriveDashboard({
 
   return (
     <>
-      <main className="mx-auto grid min-h-screen w-full max-w-[1680px] gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[300px_minmax(0,1fr)]">
-        <aside className="sidebar-shadow hidden min-h-[calc(100vh-2rem)] shrink-0 rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(249,250,255,0.72))] p-5 lg:flex lg:flex-col lg:gap-6">
-          <div className="flex items-center gap-3 rounded-[1.6rem] px-2 py-2">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,185,255,0.92))] text-white shadow-[0_18px_50px_-24px_rgba(67,97,255,0.72)]">
-              <SearchIcon className="size-5" />
-            </div>
-            <div>
-              <p className="text-[1.6rem] font-semibold tracking-[-0.05em] text-foreground xl:text-[2rem]">CloudStream</p>
-              <p className="text-sm text-muted-foreground">Drive workspace by KM</p>
-            </div>
+      <main
+        className="mx-auto grid min-h-screen w-full max-w-[1680px] gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[300px_minmax(0,1fr)]"
+        data-app-shell="true"
+      >
+        <aside className="sidebar-shadow liquid-glass hidden min-h-[calc(100vh-2rem)] shrink-0 rounded-[2rem] p-5 lg:flex lg:flex-col lg:gap-6">
+          <div className="rounded-[1.6rem] px-2 py-2">
+            <p className="text-[1.6rem] font-semibold tracking-[-0.05em] text-foreground xl:text-[2rem]">CloudStream</p>
+            <p className="text-sm text-muted-foreground">Drive workspace by KM</p>
           </div>
 
           <nav className="space-y-2">
@@ -154,10 +151,10 @@ export function DriveDashboard({
 
               return (
                 <Link
-                  className={`rounded-[1.2rem] px-4 py-3.5 transition ${
+                  className={`glass-hover hover-sheen rounded-[1.2rem] px-4 py-3.5 transition ${
                     active
-                      ? "bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,152,255,0.92))] text-primary-foreground shadow-[0_22px_50px_-28px_rgba(74,102,255,0.8)]"
-                      : "bg-transparent text-foreground hover:bg-white/75"
+                      ? "border border-white/30 bg-[linear-gradient(180deg,rgba(99,113,255,0.92),rgba(95,158,255,0.78))] text-primary-foreground shadow-[0_20px_46px_-28px_rgba(74,102,255,0.52),inset_0_1px_0_rgba(255,255,255,0.24)]"
+                      : "glass-pill text-foreground"
                   }`}
                   href={buildHref(key as DriveView, { folderId: undefined, videoId: undefined }, "", false)}
                   key={key}
@@ -176,14 +173,14 @@ export function DriveDashboard({
             })}
           </nav>
 
-          <div className="rounded-[1.5rem] border border-white/75 bg-white/68 p-4">
+          <div className="liquid-glass rounded-[1.5rem] p-4">
             <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
               Recent folders
             </p>
             <div className="space-y-2">
               {breadcrumbs.length ? breadcrumbs.map((breadcrumb) => (
                 <Link
-                  className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm text-foreground transition hover:bg-white/85"
+                  className="glass-hover rounded-2xl px-3 py-2.5 text-sm text-foreground"
                   href={buildHref(currentView, { folderId: breadcrumb.id, videoId: undefined }, currentQuery, videosOnly)}
                   key={breadcrumb.id}
                 >
@@ -198,7 +195,7 @@ export function DriveDashboard({
             </div>
           </div>
 
-          <div className="mt-auto rounded-[1.5rem] border border-white/75 bg-white/75 p-4">
+          <div className="liquid-glass mt-auto rounded-[1.5rem] p-4">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -214,19 +211,14 @@ export function DriveDashboard({
           </div>
         </aside>
 
-        <section className="min-w-0 rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(248,249,253,0.88))] p-4 md:p-6">
+        <section className="liquid-glass min-w-0 rounded-[2rem] p-4 md:p-6">
           <header className="topbar-shadow glass-panel rounded-[1.9rem] p-4 md:p-5">
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between gap-4">
                 <div className="lg:hidden">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,185,255,0.92))] text-white">
-                      <SearchIcon className="size-5" />
-                    </div>
-                    <div>
-                      <p className="font-semibold">CloudStream</p>
-                      <p className="text-sm text-muted-foreground">{view.label}</p>
-                    </div>
+                  <div>
+                    <p className="font-semibold">CloudStream</p>
+                    <p className="text-sm text-muted-foreground">{view.label}</p>
                   </div>
                 </div>
                 <div className="hidden flex-1 lg:block">
@@ -235,7 +227,7 @@ export function DriveDashboard({
                 <div className="flex items-center gap-2">
                   {[HelpCircleIcon, Settings2Icon, BellIcon].map((Icon, index) => (
                     <button
-                      className="flex size-11 items-center justify-center rounded-2xl border border-white/80 bg-white/84 text-slate-600 transition hover:-translate-y-0.5 hover:bg-white"
+                      className="glass-pill glass-hover flex size-11 items-center justify-center rounded-2xl text-slate-600"
                       key={index}
                       type="button"
                     >
@@ -264,7 +256,7 @@ export function DriveDashboard({
                   </h2>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+                  <div className="glass-pill rounded-full px-4 py-2 text-sm text-emerald-700">
                     Range-enabled proxy online
                   </div>
                   <div className="lg:hidden">
@@ -299,14 +291,14 @@ export function DriveDashboard({
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                <Link className="rounded-full bg-white/75 px-3 py-1.5 hover:bg-white" href={buildHref(currentView, { folderId: undefined, videoId: undefined }, currentQuery, videosOnly)}>
+                <Link className="glass-pill glass-hover rounded-full px-3 py-1.5" href={buildHref(currentView, { folderId: undefined, videoId: undefined }, currentQuery, videosOnly)}>
                   Root
                 </Link>
                 {breadcrumbs.map((breadcrumb) => (
                   <div className="flex items-center gap-2" key={breadcrumb.id}>
                     <ChevronRightIcon className="size-4" />
                     <Link
-                      className="rounded-full bg-white/75 px-3 py-1.5 hover:bg-white"
+                      className="glass-pill glass-hover rounded-full px-3 py-1.5"
                       href={buildHref(
                         currentView,
                         { folderId: breadcrumb.id, videoId: undefined },
@@ -447,7 +439,7 @@ export function DriveDashboard({
                       const external = !isFolder(item) && !isVideoFile(item);
 
                       return (
-                        <article className="premium-surface rounded-[1.5rem] p-4" key={item.id}>
+                      <article className="premium-surface micro-lift hover-sheen rounded-[1.5rem] p-4" key={item.id}>
                           <div className="flex items-start gap-4">
                             <div className="flex size-14 shrink-0 items-center justify-center rounded-[1.4rem] bg-slate-50 text-primary">
                               <Icon className="size-5" />
@@ -481,8 +473,8 @@ export function DriveDashboard({
                     })}
                   </div>
 
-                  <div className="hidden overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/82 md:block">
-                  <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] gap-4 border-b border-slate-100 px-5 py-4 text-sm font-medium text-muted-foreground">
+                  <div className="liquid-glass hidden overflow-hidden rounded-[1.5rem] md:block">
+                  <div className="liquid-divider grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] gap-4 px-5 py-4 text-sm font-medium text-muted-foreground">
                     <span>Name</span>
                     <span>Last modified</span>
                     <span>Size</span>
@@ -515,7 +507,7 @@ export function DriveDashboard({
 
                       return (
                         <div
-                          className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] items-center gap-4 border-t border-slate-100 px-5 py-4 transition hover:bg-slate-50/80"
+                          className="liquid-divider grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] items-center gap-4 px-5 py-4 transition hover:bg-white/26"
                           key={item.id}
                         >
                           <div className="flex min-w-0 items-center gap-4">

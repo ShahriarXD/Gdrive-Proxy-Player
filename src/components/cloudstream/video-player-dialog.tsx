@@ -48,7 +48,12 @@ export function VideoPlayerDialog({
         </DialogHeader>
         <div className="px-6 pb-6">
           {fileId && mimeType ? (
-            <VideoPlayer src={`/api/stream/${fileId}`} type={mimeType} />
+            <VideoPlayer
+              fileId={fileId}
+              fileName={fileName}
+              src={`/api/stream/${fileId}`}
+              type={mimeType}
+            />
           ) : null}
         </div>
       </DialogContent>
