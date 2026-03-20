@@ -3,11 +3,7 @@ import { DriveDashboard } from "@/components/cloudstream/drive-dashboard";
 import { LandingPanel } from "@/components/cloudstream/landing-panel";
 import { getDeskStatus } from "@/lib/desk-status";
 import { isVideoFile, type DriveView } from "@/lib/drive-shared";
-import {
-  getMissingAuthEnv,
-  getMissingOptionalAuthEnv,
-  hasAuthEnv,
-} from "@/lib/env";
+import { hasAuthEnv } from "@/lib/env";
 import {
   getDriveFileMetadata,
   getFolderBreadcrumbs,
@@ -29,24 +25,10 @@ function getSingleValue(value: SearchParamValue) {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const authReady = hasAuthEnv();
-  const missingAuthEnv = getMissingAuthEnv();
-  const missingOptionalAuthEnv = getMissingOptionalAuthEnv();
   const deskStatus = await getDeskStatus();
 
   if (!authReady) {
-    return (
-      <LandingPanel
-        deskStatus={deskStatus}
-        errorMessage={[
-          `Missing required auth env vars: ${missingAuthEnv.join(", ")}`,
-          missingOptionalAuthEnv.length
-            ? `Optional but recommended on custom domains: ${missingOptionalAuthEnv.join(", ")}`
-            : null,
-        ]
-          .filter(Boolean)
-          .join(" | ")}
-      />
-    );
+    return <LandingPanel deskStatus={deskStatus} />;
   }
 
   const session = await auth();
@@ -65,12 +47,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const accessToken = session.accessToken;
 
   if (!accessToken) {
-    return (
-      <LandingPanel
-        deskStatus={deskStatus}
-        errorMessage="Your Drive session is missing an access token. Please sign in again."
-      />
-    );
+    return <LandingPanel deskStatus={deskStatus} />;
   }
 
   const [items, breadcrumbs, selectedVideoFromUrl, storageStatus] = await Promise.all([
