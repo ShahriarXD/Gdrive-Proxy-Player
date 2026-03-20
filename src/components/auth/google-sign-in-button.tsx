@@ -1,29 +1,42 @@
 "use client";
 
-import {
-  HardDriveIcon,
-  LogInIcon,
-  MailIcon,
-  ShieldCheckIcon,
-} from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 type GoogleSignInButtonProps = {
   disabled?: boolean;
 };
 
+function GoogleLogo() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M21.8 12.23c0-.79-.07-1.55-.2-2.27H12v4.3h5.48a4.7 4.7 0 0 1-2.04 3.08v2.56h3.3c1.93-1.78 3.06-4.4 3.06-7.67Z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 22c2.76 0 5.08-.92 6.77-2.5l-3.3-2.56c-.92.61-2.1.98-3.47.98-2.66 0-4.91-1.8-5.72-4.21H2.88v2.64A10 10 0 0 0 12 22Z"
+        fill="#34A853"
+      />
+      <path
+        d="M6.28 13.71A5.98 5.98 0 0 1 5.96 12c0-.59.1-1.17.32-1.71V7.65H2.88A10 10 0 0 0 2 12c0 1.61.38 3.13.88 4.35l3.4-2.64Z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 6.08c1.5 0 2.84.52 3.9 1.53l2.92-2.92C17.07 3.07 14.75 2 12 2 8.08 2 4.72 4.25 2.88 7.65l3.4 2.64C7.09 7.88 9.34 6.08 12 6.08Z"
+        fill="#EA4335"
+      />
+    </svg>
+  );
+}
+
 export function GoogleSignInButton({ disabled = false }: GoogleSignInButtonProps) {
-  const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const startGoogleSignIn = async () => {
@@ -33,73 +46,15 @@ export function GoogleSignInButton({ disabled = false }: GoogleSignInButtonProps
   };
 
   return (
-    <>
-      <Button disabled={disabled} onClick={() => setOpen(true)} size="lg">
-        <LogInIcon className="size-4" />
-        {disabled ? "Add env vars to enable Google sign-in" : "Continue with Google"}
-      </Button>
-
-      <Dialog onOpenChange={setOpen} open={open}>
-        <DialogContent className="max-w-xl p-0">
-          <DialogHeader className="border-b border-white/10 px-6 py-5">
-            <DialogTitle>Connect your Google Drive</DialogTitle>
-            <DialogDescription>
-              CloudStream will send you to Google next, where you can review and approve access.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex flex-col gap-5 px-6 pb-6">
-            <div className="grid gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div className="flex items-start gap-3">
-                  <HardDriveIcon className="mt-0.5 size-5 text-cyan-300" />
-                  <div>
-                    <p className="font-medium text-white">Read-only Drive access</p>
-                    <p className="mt-1 text-sm leading-6 text-white/70">
-                      Browse folders and stream video files from your Google Drive.
-                      CloudStream does not request file editing or deletion permissions.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div className="flex items-start gap-3">
-                  <MailIcon className="mt-0.5 size-5 text-violet-300" />
-                  <div>
-                    <p className="font-medium text-white">Basic account info</p>
-                    <p className="mt-1 text-sm leading-6 text-white/70">
-                      Google shares your email and profile name so the app can identify your session.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div className="flex items-start gap-3">
-                  <ShieldCheckIcon className="mt-0.5 size-5 text-emerald-300" />
-                  <div>
-                    <p className="font-medium text-white">You stay in control</p>
-                    <p className="mt-1 text-sm leading-6 text-white/70">
-                      Google will show its own permission screen after this step, and you can revoke access any time from your Google account permissions page.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-              <Button onClick={() => setOpen(false)} variant="outline">
-                Cancel
-              </Button>
-              <Button disabled={isSubmitting} onClick={startGoogleSignIn}>
-                <LogInIcon className="size-4" />
-                {isSubmitting ? "Redirecting to Google..." : "Continue to Google"}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Button
+      className="min-w-[220px] justify-center"
+      disabled={disabled || isSubmitting}
+      onClick={startGoogleSignIn}
+      size="lg"
+      variant="secondary"
+    >
+      <GoogleLogo />
+      {disabled ? "Google sign-in unavailable" : isSubmitting ? "Redirecting..." : "Continue with Google"}
+    </Button>
   );
 }

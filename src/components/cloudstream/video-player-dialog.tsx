@@ -14,12 +14,14 @@ import { VideoPlayer } from "@/components/cloudstream/video-player";
 type VideoPlayerDialogProps = {
   fileId?: string;
   fileName?: string;
+  fileSize?: string;
   mimeType?: string;
 };
 
 export function VideoPlayerDialog({
   fileId,
   fileName,
+  fileSize,
   mimeType,
 }: VideoPlayerDialogProps) {
   const router = useRouter();
@@ -51,6 +53,7 @@ export function VideoPlayerDialog({
             <VideoPlayer
               fileId={fileId}
               fileName={fileName}
+              fileSize={fileSize}
               src={`/api/stream/${fileId}`}
               type={mimeType}
             />

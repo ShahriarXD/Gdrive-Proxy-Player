@@ -14,11 +14,22 @@ export type DriveItem = {
   webViewLink?: string;
 };
 
+export type DriveStorageStatus = {
+  usage?: string;
+  limit?: string;
+  usageInDrive?: string;
+  usageInDriveTrash?: string;
+};
+
 type DriveListResponse = {
   files?: DriveItem[];
 };
 
 type DriveFileResponse = DriveItem;
+
+type DriveAboutResponse = {
+  storageQuota?: DriveStorageStatus;
+};
 
 type DriveRequestOptions = {
   accessToken: string;
@@ -120,6 +131,17 @@ export async function getDriveFileMetadata(accessToken: string, fileId: string) 
   url.searchParams.set("supportsAllDrives", "true");
 
   return driveFetch<DriveFileResponse>(accessToken, url);
+}
+
+export async function getDriveStorageStatus(accessToken: string) {
+  const url = new URL("https://www.googleapis.com/drive/v3/about");
+  url.searchParams.set(
+    "fields",
+    "storageQuota(limit,usage,usageInDrive,usageInDriveTrash)"
+  );
+
+  const response = await driveFetch<DriveAboutResponse>(accessToken, url);
+  return response.storageQuota ?? null;
 }
 
 export async function getFolderBreadcrumbs(accessToken: string, folderId?: string) {

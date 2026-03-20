@@ -4,10 +4,11 @@ import {
   PlayCircleIcon,
   ShieldCheckIcon,
   SparklesIcon,
-  VideoIcon,
 } from "lucide-react";
 
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { LandingSearchBar } from "@/components/cloudstream/landing-search-bar";
+import { LocalDeskWidget } from "@/components/cloudstream/local-desk-widget";
 import { Button } from "@/components/ui/button";
 
 type LandingPanelProps = {
@@ -40,35 +41,31 @@ export function LandingPanel({
               </div>
             </div>
             <div className="rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              built by KM Shahriar Hossain
+              Private drive portal
             </div>
           </div>
 
           <div className="max-w-2xl space-y-5">
             <div className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-800 shadow-lg">
               <SparklesIcon className="size-4 text-cyan-300" />
-              Premium cloud productivity dashboards
+              Premium cloud workspace
             </div>
             <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-foreground md:text-7xl">
-              Turn your Google Drive into a cinematic workspace.
+              Continue with Google and open your private streaming desk.
             </h1>
             <p className="max-w-xl text-base leading-8 text-muted-foreground md:text-lg">
-              Search like a command center, move through folders with desktop-class
-              clarity, and stream Drive videos instantly through a proxy built for Vercel.
+              Browse your Drive like a premium media library, search with desktop-style
+              precision, and stream instantly through a Vercel-friendly proxy.
             </p>
           </div>
 
+          <LandingSearchBar disabled />
+
           <div className="flex flex-wrap items-center gap-3">
             <GoogleSignInButton disabled={!authReady} />
-            <Button asChild size="lg" variant="secondary">
-              <a
-                href="https://developers.google.com/drive/api/guides/enable-drive-api"
-                rel="noreferrer"
-                target="_blank"
-              >
-                Enable Drive API
-              </a>
-            </Button>
+            <p className="text-sm text-muted-foreground">
+              One tap gets you into CloudStream with official Google sign-in.
+            </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -104,6 +101,9 @@ export function LandingPanel({
 
         <section className="animate-slide-up-fade relative flex min-h-[720px] items-center justify-center delay-100">
           <div className="soft-grid absolute inset-0 rounded-[2.5rem] opacity-50" />
+          <div className="absolute right-4 top-4 z-20 w-full max-w-[280px]">
+            <LocalDeskWidget />
+          </div>
           <div className="absolute inset-x-12 top-10 h-32 rounded-full bg-blue-500/8 blur-3xl" />
           <div className="floating-card relative w-full max-w-[640px]">
             <div className="absolute -left-8 top-16 h-[82%] w-full rounded-[2rem] bg-white/36 blur-sm" />
@@ -170,24 +170,18 @@ export function LandingPanel({
                   <div className="space-y-4">
                     <div className="liquid-glass rounded-[1.75rem] p-4">
                       <div className="mb-4 flex items-center justify-between">
-                        <p className="font-semibold">Recently used</p>
-                        <p className="text-sm text-muted-foreground">7 items</p>
+                        <p className="font-semibold">Live status</p>
+                        <p className="text-sm text-emerald-600">Connected</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-3">
                         {[
-                          "My projects",
-                          "Family photo",
-                          "NDA document",
-                          "Episode file",
-                        ].map((item, index) => (
-                          <div className="glass-pill glass-hover rounded-[1.25rem] p-3" key={item}>
-                            <div className="mb-8 flex size-10 items-center justify-center rounded-2xl bg-white text-primary shadow-sm">
-                              {index === 3 ? <VideoIcon className="size-4" /> : <FolderIcon className="size-4" />}
-                            </div>
-                            <p className="truncate text-sm font-medium">{item}</p>
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              {index === 3 ? "MP4, 218 MB" : "Folder"}
-                            </p>
+                          ["Storage usage", "75% of 15GB used"],
+                          ["Videos syncing", "1,204 videos indexed"],
+                          ["Last playback", "Resume-ready across devices"],
+                        ].map(([label, value]) => (
+                          <div className="glass-pill glass-hover rounded-[1.25rem] p-3" key={label}>
+                            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+                            <p className="mt-2 text-sm font-medium text-foreground">{value}</p>
                           </div>
                         ))}
                       </div>

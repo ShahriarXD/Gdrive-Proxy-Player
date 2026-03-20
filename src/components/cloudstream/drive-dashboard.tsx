@@ -13,11 +13,13 @@ import {
   StarIcon,
   UsersIcon,
 } from "lucide-react";
+import Image from "next/image";
 import type { Route } from "next";
 import Link from "next/link";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { DriveToolbar } from "@/components/cloudstream/drive-toolbar";
+import { LocalDeskWidget } from "@/components/cloudstream/local-desk-widget";
 import { VideoPlayerDialog } from "@/components/cloudstream/video-player-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +28,7 @@ import {
   formatFileName,
 } from "@/lib/utils";
 import {
+  type DriveStorageStatus,
   isFolder,
   isVideoFile,
   type DriveItem,
@@ -44,6 +47,8 @@ type DriveDashboardProps = {
   currentView: DriveView;
   items: DriveItem[];
   selectedVideo: DriveItem | null;
+  storageStatus: DriveStorageStatus | null;
+  userImage?: string | null;
   userName: string;
   videosOnly: boolean;
 };
@@ -126,11 +131,34 @@ export function DriveDashboard({
   currentView,
   items,
   selectedVideo,
+  storageStatus,
+  userImage,
   userName,
   videosOnly,
 }: DriveDashboardProps) {
   const view = viewMeta[currentView];
   const recentItems = items.slice(0, 5);
+  const firstName = userName.split(" ")[0] || "Rafin";
+  const usage = storageStatus?.usage ? Number(storageStatus.usage) : null;
+  const limit = storageStatus?.limit ? Number(storageStatus.limit) : null;
+  const usageRatio = usage && limit ? Math.round((usage / limit) * 100) : null;
+  const liveStats = [
+    {
+      label: "Drive usage",
+      value:
+        usage && limit
+          ? `${usageRatio}% of ${formatBytes(limit)} used`
+          : "Storage data unavailable",
+    },
+    {
+      label: "Current library",
+      value: `${items.filter((item) => isVideoFile(item)).length} videos in this view`,
+    },
+    {
+      label: "Workspace health",
+      value: "Streaming proxy online",
+    },
+  ];
 
   return (
     <>
@@ -203,9 +231,21 @@ export function DriveDashboard({
                 </p>
                 <p className="text-sm font-medium text-foreground">{userName}</p>
               </div>
-              <div className="flex size-11 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-500">
-                {userName.charAt(0).toUpperCase()}
-              </div>
+              {userImage ? (
+                <div className="relative size-11 overflow-hidden rounded-full border border-white/70 shadow-[0_10px_25px_-18px_rgba(30,41,59,0.4)]">
+                  <Image
+                    alt={userName}
+                    className="object-cover"
+                    fill
+                    sizes="44px"
+                    src={userImage}
+                  />
+                </div>
+              ) : (
+                <div className="flex size-11 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-500">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
             <SignOutButton />
           </div>
@@ -224,8 +264,8 @@ export function DriveDashboard({
                 <div className="hidden flex-1 lg:block">
                   <DriveToolbar defaultQuery={currentQuery} videosOnly={videosOnly} />
                 </div>
-                <div className="flex items-center gap-2">
-                  {[HelpCircleIcon, Settings2Icon, BellIcon].map((Icon, index) => (
+              <div className="flex items-center gap-2">
+                {[HelpCircleIcon, Settings2Icon, BellIcon].map((Icon, index) => (
                     <button
                       className="glass-pill glass-hover flex size-11 items-center justify-center rounded-2xl text-slate-600"
                       key={index}
@@ -234,8 +274,22 @@ export function DriveDashboard({
                       <Icon className="size-5" />
                     </button>
                   ))}
-                  <div className="hidden size-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-500 md:flex">
-                    {userName.charAt(0).toUpperCase()}
+                  <div className="hidden md:block">
+                    {userImage ? (
+                      <div className="relative size-12 overflow-hidden rounded-full border border-white/70 shadow-[0_10px_25px_-18px_rgba(30,41,59,0.4)]">
+                        <Image
+                          alt={userName}
+                          className="object-cover"
+                          fill
+                          sizes="48px"
+                          src={userImage}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex size-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-500">
+                        {userName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -252,12 +306,17 @@ export function DriveDashboard({
                     <span>{view.label}</span>
                   </div>
                   <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground md:text-4xl">
-                    {view.label}
+                    Welcome back, {firstName}. Your library is ready.
                   </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Search your Drive, jump straight into playback, and keep your private portal in sync.
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="glass-pill rounded-full px-4 py-2 text-sm text-emerald-700">
-                    Range-enabled proxy online
+                    {usageRatio !== null && limit
+                      ? `${usageRatio}% of ${formatBytes(limit)} used`
+                      : "Range-enabled proxy online"}
                   </div>
                   <div className="lg:hidden">
                     <SignOutButton />
@@ -315,6 +374,18 @@ export function DriveDashboard({
           </header>
 
           <div className="mt-6 space-y-6">
+            <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+              <div className="grid gap-4 md:grid-cols-3">
+                {liveStats.map((stat) => (
+                  <article className="premium-surface micro-lift rounded-[1.6rem] p-5" key={stat.label}>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{stat.label}</p>
+                    <p className="mt-3 text-lg font-semibold text-foreground">{stat.value}</p>
+                  </article>
+                ))}
+              </div>
+              <LocalDeskWidget />
+            </section>
+
             {recentItems.length ? (
               <section className="glass-panel section-enter rounded-[1.9rem] p-5 md:p-6">
                 <div className="mb-5 flex items-center justify-between">
@@ -564,6 +635,7 @@ export function DriveDashboard({
       <VideoPlayerDialog
         fileId={selectedVideo?.id}
         fileName={selectedVideo?.name}
+        fileSize={selectedVideo?.size}
         mimeType={selectedVideo?.mimeType}
       />
     </>

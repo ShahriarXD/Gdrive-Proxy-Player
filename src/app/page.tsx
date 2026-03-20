@@ -5,6 +5,8 @@ import { hasAuthEnv } from "@/lib/env";
 import {
   getDriveFileMetadata,
   getFolderBreadcrumbs,
+  getDriveStorageStatus,
+  isVideoFile,
   listDriveItems,
   type DriveView,
 } from "@/lib/google-drive";
@@ -52,11 +54,30 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     return <LandingPanel errorMessage="Your Drive session is missing an access token. Please sign in again." />;
   }
 
-  const [items, breadcrumbs, selectedVideo] = await Promise.all([
+  const [items, breadcrumbs, selectedVideoFromUrl, storageStatus] = await Promise.all([
     listDriveItems({ accessToken, view, folderId, query, videosOnly }),
     getFolderBreadcrumbs(accessToken, folderId),
     selectedVideoId ? getDriveFileMetadata(accessToken, selectedVideoId) : Promise.resolve(null),
+    getDriveStorageStatus(accessToken),
   ]);
+
+  const normalizedQuery = query.trim().toLowerCase();
+  const autoSelectedVideo =
+    !selectedVideoId && normalizedQuery
+      ? items.find((item) => {
+          if (!isVideoFile(item)) {
+            return false;
+          }
+
+          const normalizedName = item.name.trim().toLowerCase();
+          return (
+            normalizedName === normalizedQuery ||
+            (items.filter((candidate) => isVideoFile(candidate)).length === 1 &&
+              normalizedName.includes(normalizedQuery))
+          );
+        }) ?? null
+      : null;
+  const selectedVideo = selectedVideoFromUrl ?? autoSelectedVideo;
 
   return (
     <DriveDashboard
@@ -66,6 +87,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       currentView={view}
       items={items}
       selectedVideo={selectedVideo}
+      storageStatus={storageStatus}
+      userImage={session.user.image}
       userName={session.user.name ?? session.user.email ?? "KM"}
       videosOnly={videosOnly}
     />

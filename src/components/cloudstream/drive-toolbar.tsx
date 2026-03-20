@@ -56,11 +56,14 @@ export function DriveToolbar({ defaultQuery, videosOnly }: DriveToolbarProps) {
         <div className="relative flex-1">
           <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            className="h-14 rounded-[1.4rem] pl-11"
+            className="h-14 rounded-[1.4rem] pl-11 pr-20"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search folder or file"
+            placeholder="Quick open a Drive file or video"
             value={query}
           />
+          <div className="glass-pill pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500 md:block">
+            Command K
+          </div>
         </div>
         <Button className="h-14 rounded-[1.4rem] px-6" type="submit" variant="secondary">
           Search
