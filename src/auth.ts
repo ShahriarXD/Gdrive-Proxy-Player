@@ -2,7 +2,7 @@ import NextAuth, { type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import type { JWT } from "next-auth/jwt";
 
-import { getRequiredEnv } from "@/lib/env";
+import { getEnv } from "@/lib/env";
 
 type GoogleTokenResponse = {
   access_token: string;
@@ -17,6 +17,13 @@ async function refreshGoogleAccessToken(token: JWT): Promise<JWT> {
     return { ...token, error: "RefreshAccessTokenError" };
   }
 
+  const clientId = getEnv("GOOGLE_CLIENT_ID");
+  const clientSecret = getEnv("GOOGLE_CLIENT_SECRET");
+
+  if (!clientId || !clientSecret) {
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+
   try {
     const response = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -24,8 +31,8 @@ async function refreshGoogleAccessToken(token: JWT): Promise<JWT> {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({
-        client_id: getRequiredEnv("GOOGLE_CLIENT_ID"),
-        client_secret: getRequiredEnv("GOOGLE_CLIENT_SECRET"),
+        client_id: clientId,
+        client_secret: clientSecret,
         grant_type: "refresh_token",
         refresh_token: token.refreshToken,
       }),
@@ -62,7 +69,7 @@ const scopes = [
 
 export const authConfig = {
   trustHost: true,
-  secret: getRequiredEnv("NEXTAUTH_SECRET"),
+  secret: getEnv("NEXTAUTH_SECRET") ?? "cloudstream-dev-secret",
   pages: {
     signIn: "/",
   },
@@ -71,8 +78,8 @@ export const authConfig = {
   },
   providers: [
     Google({
-      clientId: getRequiredEnv("GOOGLE_CLIENT_ID"),
-      clientSecret: getRequiredEnv("GOOGLE_CLIENT_SECRET"),
+      clientId: getEnv("GOOGLE_CLIENT_ID") ?? "missing-google-client-id",
+      clientSecret: getEnv("GOOGLE_CLIENT_SECRET") ?? "missing-google-client-secret",
       authorization: {
         params: {
           access_type: "offline",

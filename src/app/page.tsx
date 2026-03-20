@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { DriveDashboard } from "@/components/cloudstream/drive-dashboard";
 import { LandingPanel } from "@/components/cloudstream/landing-panel";
+import { hasAuthEnv } from "@/lib/env";
 import {
   getDriveFileMetadata,
   getFolderBreadcrumbs,
@@ -21,6 +22,17 @@ function getSingleValue(value: SearchParamValue) {
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
+  const authReady = hasAuthEnv();
+
+  if (!authReady) {
+    return (
+      <LandingPanel
+        authReady={false}
+        errorMessage="Set NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET in .env.local before signing in."
+      />
+    );
+  }
+
   const session = await auth();
 
   if (!session?.user) {

@@ -4,10 +4,14 @@ import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Button } from "@/components/ui/button";
 
 type LandingPanelProps = {
+  authReady?: boolean;
   errorMessage?: string;
 };
 
-export function LandingPanel({ errorMessage }: LandingPanelProps) {
+export function LandingPanel({
+  authReady = true,
+  errorMessage,
+}: LandingPanelProps) {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-10 px-6 py-20">
       <div className="glass-panel grid overflow-hidden rounded-[2rem] lg:grid-cols-[1.1fr_0.9fr]">
@@ -28,7 +32,7 @@ export function LandingPanel({ errorMessage }: LandingPanelProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <GoogleSignInButton />
+            <GoogleSignInButton disabled={!authReady} />
             <Button asChild variant="outline" size="lg">
               <a
                 href="https://developers.google.com/drive/api/guides/enable-drive-api"
