@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { DriveDashboard } from "@/components/cloudstream/drive-dashboard";
 import { LandingPanel } from "@/components/cloudstream/landing-panel";
+import { getDeskStatus } from "@/lib/desk-status";
 import { hasAuthEnv } from "@/lib/env";
 import {
   getDriveFileMetadata,
@@ -25,11 +26,13 @@ function getSingleValue(value: SearchParamValue) {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const authReady = hasAuthEnv();
+  const deskStatus = await getDeskStatus();
 
   if (!authReady) {
     return (
       <LandingPanel
         authReady={false}
+        deskStatus={deskStatus}
         errorMessage="Set NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET in .env.local before signing in."
       />
     );
@@ -38,7 +41,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const session = await auth();
 
   if (!session?.user) {
-    return <LandingPanel />;
+    return <LandingPanel deskStatus={deskStatus} />;
   }
 
   const params = await searchParams;
@@ -51,7 +54,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const accessToken = session.accessToken;
 
   if (!accessToken) {
-    return <LandingPanel errorMessage="Your Drive session is missing an access token. Please sign in again." />;
+    return (
+      <LandingPanel
+        deskStatus={deskStatus}
+        errorMessage="Your Drive session is missing an access token. Please sign in again."
+      />
+    );
   }
 
   const [items, breadcrumbs, selectedVideoFromUrl, storageStatus] = await Promise.all([
@@ -85,6 +93,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       currentFolderId={folderId}
       currentQuery={query}
       currentView={view}
+      deskStatus={deskStatus}
       items={items}
       selectedVideo={selectedVideo}
       storageStatus={storageStatus}

@@ -246,7 +246,7 @@ export function VideoPlayer({
     setCurrentTime(clampedTime);
   }, [duration]);
 
-  const seekBy = (amount: number) => {
+  const seekBy = useCallback((amount: number) => {
     if (!videoRef.current) {
       return;
     }
@@ -254,7 +254,7 @@ export function VideoPlayer({
     seekTo(videoRef.current.currentTime + amount);
     setGestureHud(`${amount > 0 ? "+" : ""}${amount}s`);
     window.setTimeout(() => setGestureHud(null), 700);
-  };
+  }, [seekTo]);
 
   const resumePlayback = () => {
     const media = videoRef.current;
@@ -300,6 +300,17 @@ export function VideoPlayer({
     const nextMuted = !videoRef.current.muted;
     videoRef.current.muted = nextMuted;
     setVolume(nextMuted ? 0 : videoRef.current.volume || 1);
+  };
+
+  const setVolumeLevel = (nextVolume: number) => {
+    if (!videoRef.current) {
+      return;
+    }
+
+    const clampedVolume = clamp(nextVolume, 0, 1);
+    videoRef.current.volume = clampedVolume;
+    videoRef.current.muted = clampedVolume === 0;
+    setVolume(clampedVolume);
   };
 
   const toggleFullscreen = async () => {
@@ -507,6 +518,58 @@ export function VideoPlayer({
     };
   }, [interactionHud]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const activeElement = document.activeElement as HTMLElement | null;
+      const isTyping =
+        activeElement?.tagName === "INPUT" ||
+        activeElement?.tagName === "TEXTAREA" ||
+        activeElement?.tagName === "SELECT" ||
+        activeElement?.isContentEditable;
+
+      if (isTyping) {
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+
+      if (key === "j") {
+        event.preventDefault();
+        seekBy(-SEEK_SECONDS);
+        return;
+      }
+
+      if (key === "l") {
+        event.preventDefault();
+        seekBy(SEEK_SECONDS);
+        return;
+      }
+
+      if (key === "k" || key === " ") {
+        event.preventDefault();
+        togglePlay();
+        return;
+      }
+
+      if (key === "f") {
+        event.preventDefault();
+        void toggleFullscreen();
+        return;
+      }
+
+      if (key === "m") {
+        event.preventDefault();
+        toggleMute();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [seekBy]);
+
   return (
     <div className="animate-in fade-in-0 zoom-in-95 space-y-4 duration-300">
       <div className="glass-panel rounded-[1.6rem] px-4 py-4">
@@ -628,6 +691,7 @@ export function VideoPlayer({
               preload="metadata"
               style={{ filter: `brightness(${brightness})` }}
               onClick={togglePlay}
+              onDoubleClick={() => void toggleFullscreen()}
               onEnded={() => {
                 window.localStorage.removeItem(storageKey);
                 setResumeTime(null);
@@ -660,6 +724,7 @@ export function VideoPlayer({
               }}
               onTimeUpdate={(event) => {
                 setCurrentTime(event.currentTarget.currentTime);
+                setVolume(event.currentTarget.muted ? 0 : event.currentTarget.volume);
 
                 if (Math.floor(event.currentTarget.currentTime) % 5 === 0) {
                   persistPlayback();
@@ -777,6 +842,16 @@ export function VideoPlayer({
                   >
                     {volume === 0 ? <VolumeOffIcon className="size-5" /> : <Volume2Icon className="size-5" />}
                   </button>
+                  <input
+                    aria-label="Volume"
+                    className="accent-white hidden h-1.5 w-24 cursor-pointer appearance-none rounded-full bg-white/20 md:block"
+                    max="1"
+                    min="0"
+                    onChange={(event) => setVolumeLevel(Number(event.target.value))}
+                    step="0.01"
+                    type="range"
+                    value={volume}
+                  />
                   <div className="hidden min-w-[112px] text-sm text-white/80 md:block">
                     {formatPlaybackTime(currentTime)} / {formatPlaybackTime(duration)}
                   </div>

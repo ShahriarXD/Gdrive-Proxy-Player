@@ -22,6 +22,7 @@ import { DriveToolbar } from "@/components/cloudstream/drive-toolbar";
 import { LocalDeskWidget } from "@/components/cloudstream/local-desk-widget";
 import { VideoPlayerDialog } from "@/components/cloudstream/video-player-dialog";
 import { Button } from "@/components/ui/button";
+import type { DeskStatus } from "@/lib/desk-status";
 import {
   formatBytes,
   formatDate,
@@ -47,6 +48,7 @@ type DriveDashboardProps = {
   currentView: DriveView;
   items: DriveItem[];
   selectedVideo: DriveItem | null;
+  deskStatus: DeskStatus;
   storageStatus: DriveStorageStatus | null;
   userImage?: string | null;
   userName: string;
@@ -131,6 +133,7 @@ export function DriveDashboard({
   currentView,
   items,
   selectedVideo,
+  deskStatus,
   storageStatus,
   userImage,
   userName,
@@ -383,7 +386,7 @@ export function DriveDashboard({
                   </article>
                 ))}
               </div>
-              <LocalDeskWidget />
+              <LocalDeskWidget initialStatus={deskStatus} />
             </section>
 
             {recentItems.length ? (

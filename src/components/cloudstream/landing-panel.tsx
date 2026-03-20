@@ -10,14 +10,17 @@ import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { LandingSearchBar } from "@/components/cloudstream/landing-search-bar";
 import { LocalDeskWidget } from "@/components/cloudstream/local-desk-widget";
 import { Button } from "@/components/ui/button";
+import type { DeskStatus } from "@/lib/desk-status";
 
 type LandingPanelProps = {
   authReady?: boolean;
+  deskStatus: DeskStatus;
   errorMessage?: string;
 };
 
 export function LandingPanel({
   authReady = true,
+  deskStatus,
   errorMessage,
 }: LandingPanelProps) {
   return (
@@ -102,7 +105,7 @@ export function LandingPanel({
         <section className="animate-slide-up-fade relative flex min-h-[720px] items-center justify-center delay-100">
           <div className="soft-grid absolute inset-0 rounded-[2.5rem] opacity-50" />
           <div className="absolute right-4 top-4 z-20 w-full max-w-[280px]">
-            <LocalDeskWidget />
+            <LocalDeskWidget initialStatus={deskStatus} />
           </div>
           <div className="absolute inset-x-12 top-10 h-32 rounded-full bg-blue-500/8 blur-3xl" />
           <div className="floating-card relative w-full max-w-[640px]">
