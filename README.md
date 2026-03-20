@@ -55,9 +55,9 @@ Create a local .env.local file:
 
 ```bash
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=replace-with-a-long-random-secret
-GOOGLE_CLIENT_ID=replace-with-google-client-id
-GOOGLE_CLIENT_SECRET=replace-with-google-client-secret
+NEXTAUTH_SECRET=PUT_YOUR_OWN_KEY
+GOOGLE_CLIENT_ID=PUT_YOUR_OWN_KEY
+GOOGLE_CLIENT_SECRET=PUT_YOUR_OWN_KEY
 ```
 
 ### Variable Reference
@@ -76,10 +76,8 @@ GOOGLE_CLIENT_SECRET=replace-with-google-client-secret
 3. Create OAuth 2.0 credentials (Web application).
 4. Add Authorized JavaScript origins:
    - http://localhost:3000
-   - https://gdrive-proxy-player.vercel.app
 5. Add Authorized redirect URIs:
    - http://localhost:3000/api/auth/callback/google
-   - https://gdrive-proxy-player.vercel.app/api/auth/callback/google
 
 ## Run Locally
 
@@ -139,3 +137,8 @@ Please keep pull requests small, test your changes locally, and avoid committing
 ## License
 
 Private project. All rights reserved unless stated otherwise.
+
+
+## 👨‍💻 Author
+
+**Developed with ❤️ by K M SHAHRIAR HOSSAIN**
