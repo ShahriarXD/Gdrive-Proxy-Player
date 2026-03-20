@@ -10,7 +10,7 @@ CloudStream is a private Google Drive streaming workspace built with Next.js App
 
 ## Preview
 
-![CloudStream preview](https://gdrive-proxy-player.vercel.app/opengraph-image)
+![CloudStream preview](ss.png)
 
 Live app: https://gdrive-proxy-player.vercel.app/
 
