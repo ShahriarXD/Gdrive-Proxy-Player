@@ -4,6 +4,16 @@ import type { JWT } from "next-auth/jwt";
 
 import { getEnv } from "@/lib/env";
 
+function requireEnv(name: string): string {
+  const value = getEnv(name)?.trim();
+
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+
+  return value;
+}
+
 type GoogleTokenResponse = {
   access_token: string;
   expires_in: number;
@@ -69,7 +79,7 @@ const scopes = [
 
 export const authConfig = {
   trustHost: true,
-  secret: getEnv("NEXTAUTH_SECRET") ?? "cloudstream-dev-secret",
+  secret: requireEnv("NEXTAUTH_SECRET"),
   pages: {
     signIn: "/",
   },
@@ -78,8 +88,8 @@ export const authConfig = {
   },
   providers: [
     Google({
-      clientId: getEnv("GOOGLE_CLIENT_ID") ?? "missing-google-client-id",
-      clientSecret: getEnv("GOOGLE_CLIENT_SECRET") ?? "missing-google-client-secret",
+      clientId: requireEnv("GOOGLE_CLIENT_ID"),
+      clientSecret: requireEnv("GOOGLE_CLIENT_SECRET"),
       authorization: {
         params: {
           access_type: "offline",
