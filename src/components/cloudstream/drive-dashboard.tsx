@@ -1,11 +1,16 @@
 import {
+  BellIcon,
   ChevronRightIcon,
   Clock3Icon,
   FileIcon,
   FolderIcon,
+  HelpCircleIcon,
   ImageIcon,
   LayoutGridIcon,
+  MoreHorizontalIcon,
   MonitorPlayIcon,
+  SearchIcon,
+  Settings2Icon,
   StarIcon,
   UsersIcon,
 } from "lucide-react";
@@ -125,32 +130,33 @@ export function DriveDashboard({
   videosOnly,
 }: DriveDashboardProps) {
   const view = viewMeta[currentView];
+  const recentItems = items.slice(0, 5);
 
   return (
     <>
-      <main className="mx-auto flex min-h-screen w-full max-w-[1560px] gap-6 px-4 py-4 md:px-6 lg:px-8">
-        <aside className="glass-panel hidden w-80 shrink-0 rounded-[2rem] p-5 lg:flex lg:flex-col lg:gap-6">
-          <div className="rounded-[1.5rem] bg-slate-950 px-5 py-6 text-white">
-            <p className="text-xs uppercase tracking-[0.24em] text-white/60">
-              CloudStream
-            </p>
-            <h1 className="mt-3 text-2xl font-semibold">KM Workspace</h1>
-            <p className="mt-2 text-sm leading-6 text-white/70">
-              Stream your Drive videos through a private edge proxy.
-            </p>
+      <main className="mx-auto grid min-h-screen w-full max-w-[1680px] gap-0 px-3 py-3 md:px-5 md:py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <aside className="sidebar-shadow hidden min-h-[calc(100vh-2rem)] shrink-0 rounded-[2rem] border border-white/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(249,250,255,0.72))] p-5 lg:flex lg:flex-col lg:gap-6">
+          <div className="flex items-center gap-3 rounded-[1.6rem] px-2 py-2">
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,185,255,0.92))] text-white shadow-[0_18px_50px_-24px_rgba(67,97,255,0.72)]">
+              <SearchIcon className="size-5" />
+            </div>
+            <div>
+              <p className="text-[2rem] font-semibold tracking-[-0.05em] text-foreground">CloudStream</p>
+              <p className="text-sm text-muted-foreground">Drive workspace by KM</p>
+            </div>
           </div>
 
-          <nav className="flex flex-col gap-2">
+          <nav className="space-y-2">
             {Object.entries(viewMeta).map(([key, value]) => {
               const Icon = value.icon;
               const active = key === currentView;
 
               return (
                 <Link
-                  className={`rounded-[1.25rem] px-4 py-3 transition ${
+                  className={`rounded-[1.2rem] px-4 py-3.5 transition ${
                     active
-                      ? "bg-primary text-primary-foreground shadow-lg"
-                      : "bg-white/60 text-foreground hover:bg-white"
+                      ? "bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,152,255,0.92))] text-primary-foreground shadow-[0_22px_50px_-28px_rgba(74,102,255,0.8)]"
+                      : "bg-transparent text-foreground hover:bg-white/75"
                   }`}
                   href={buildHref(key as DriveView, { folderId: undefined, videoId: undefined }, "", false)}
                   key={key}
@@ -169,38 +175,95 @@ export function DriveDashboard({
             })}
           </nav>
 
-          <div className="mt-auto flex items-center justify-between rounded-[1.25rem] border border-white/50 bg-white/60 px-4 py-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Signed in as
-              </p>
-              <p className="text-sm font-medium text-foreground">{userName}</p>
+          <div className="rounded-[1.5rem] border border-white/75 bg-white/68 p-4">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
+              Recent folders
+            </p>
+            <div className="space-y-2">
+              {breadcrumbs.length ? breadcrumbs.map((breadcrumb) => (
+                <Link
+                  className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm text-foreground transition hover:bg-white/85"
+                  href={buildHref(currentView, { folderId: breadcrumb.id, videoId: undefined }, currentQuery, videosOnly)}
+                  key={breadcrumb.id}
+                >
+                  <FolderIcon className="size-4 text-primary" />
+                  <span className="truncate">{breadcrumb.name}</span>
+                </Link>
+              )) : (
+                <div className="rounded-2xl bg-slate-50 px-3 py-3 text-sm text-muted-foreground">
+                  Your root folder is ready.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-auto rounded-[1.5rem] border border-white/75 bg-white/75 p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  Signed in as
+                </p>
+                <p className="text-sm font-medium text-foreground">{userName}</p>
+              </div>
+              <div className="flex size-11 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-500">
+                {userName.charAt(0).toUpperCase()}
+              </div>
             </div>
             <SignOutButton />
           </div>
         </aside>
 
-        <section className="flex min-w-0 flex-1 flex-col gap-6">
-          <header className="glass-panel rounded-[2rem] p-5 md:p-6">
+        <section className="min-w-0 rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(248,249,253,0.78))] p-4 md:p-6">
+          <header className="topbar-shadow glass-panel rounded-[1.9rem] p-4 md:p-5">
             <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center justify-between gap-4">
+                <div className="lg:hidden">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(90,103,255,1),rgba(85,185,255,0.92))] text-white">
+                      <SearchIcon className="size-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">CloudStream</p>
+                      <p className="text-sm text-muted-foreground">{view.label}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="hidden flex-1 lg:block">
+                  <DriveToolbar defaultQuery={currentQuery} videosOnly={videosOnly} />
+                </div>
+                <div className="flex items-center gap-2">
+                  {[HelpCircleIcon, Settings2Icon, BellIcon].map((Icon, index) => (
+                    <button
+                      className="flex size-11 items-center justify-center rounded-2xl border border-white/80 bg-white/84 text-slate-600 transition hover:-translate-y-0.5 hover:bg-white"
+                      key={index}
+                      type="button"
+                    >
+                      <Icon className="size-5" />
+                    </button>
+                  ))}
+                  <div className="hidden size-12 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-500 md:flex">
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:hidden">
+                <DriveToolbar defaultQuery={currentQuery} videosOnly={videosOnly} />
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>Drive view</span>
+                    <span>Workspace</span>
                     <ChevronRightIcon className="size-4" />
                     <span>{view.label}</span>
                   </div>
-                  <h2 className="text-3xl font-semibold tracking-tight text-foreground">
+                  <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground md:text-4xl">
                     {view.label}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                    Browse folders, open Drive files, and launch videos in the modal
-                    player without leaving the dashboard.
-                  </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 self-start">
-                  <div className="flex items-center gap-2 rounded-full border border-white/60 bg-white/75 px-4 py-2 text-sm text-muted-foreground">
-                    <span className="size-2 rounded-full bg-emerald-500" />
+                <div className="flex items-center gap-3">
+                  <div className="rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
                     Range-enabled proxy online
                   </div>
                   <div className="lg:hidden">
@@ -234,8 +297,6 @@ export function DriveDashboard({
                 })}
               </div>
 
-              <DriveToolbar defaultQuery={currentQuery} videosOnly={videosOnly} />
-
               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <Link className="rounded-full bg-white/75 px-3 py-1.5 hover:bg-white" href={buildHref(currentView, { folderId: undefined, videoId: undefined }, currentQuery, videosOnly)}>
                   Root
@@ -260,10 +321,113 @@ export function DriveDashboard({
             </div>
           </header>
 
-          <div className="glass-panel rounded-[2rem] p-5 md:p-6">
-            {items.length ? (
-              <div className="dashboard-grid grid gap-4">
-                {items.map((item) => {
+          <div className="mt-6 space-y-6">
+            {recentItems.length ? (
+              <section className="glass-panel rounded-[1.9rem] p-5 md:p-6">
+                <div className="mb-5 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">Recently used</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Jump back into the files you touched most recently.
+                    </p>
+                  </div>
+                  <div className="hidden items-center gap-2 md:flex">
+                    <Button size="icon" variant="outline">
+                      <LayoutGridIcon className="size-4" />
+                    </Button>
+                    <Button size="icon" variant="outline">
+                      <MoreHorizontalIcon className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="dashboard-grid grid gap-4">
+                  {recentItems.map((item) => {
+                    const Icon = getItemIcon(item);
+                    const internalHref = isFolder(item)
+                      ? buildHref(
+                          currentView,
+                          { folderId: item.id, videoId: undefined },
+                          currentQuery,
+                          videosOnly
+                        )
+                      : isVideoFile(item)
+                        ? buildHref(
+                            currentView,
+                            {
+                              folderId: currentFolderId,
+                              videoId: item.id,
+                            },
+                            currentQuery,
+                            videosOnly
+                          )
+                        : null;
+                    const externalHref = !internalHref ? item.webViewLink ?? "#" : null;
+                    const external = !isFolder(item) && !isVideoFile(item);
+
+                    return (
+                      <article
+                        className="group rounded-[1.6rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(246,248,253,0.9))] p-4 shadow-[0_24px_60px_-40px_rgba(61,74,126,0.34)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_34px_90px_-46px_rgba(61,74,126,0.42)]"
+                        key={item.id}
+                      >
+                        <div className="mb-5 flex items-center justify-between">
+                          <div className="flex size-12 items-center justify-center rounded-2xl bg-slate-100 text-primary">
+                            <Icon className="size-5" />
+                          </div>
+                          <button className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700" type="button">
+                            <MoreHorizontalIcon className="size-4" />
+                          </button>
+                        </div>
+                        <h4 className="line-clamp-2 text-base font-semibold text-foreground">{item.name}</h4>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video file" : item.mimeType}
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">{formatBytes(item.size)}</p>
+                        <div className="mt-5">
+                          <Button asChild className="w-full" variant={isVideoFile(item) ? "default" : "secondary"}>
+                            {external ? (
+                              <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
+                                Open file
+                              </a>
+                            ) : (
+                              <Link href={internalHref ?? "/"}>
+                                {isFolder(item) ? "Open folder" : isVideoFile(item) ? "Play video" : "Open file"}
+                              </Link>
+                            )}
+                          </Button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ) : null}
+
+            <section className="glass-panel rounded-[1.9rem] p-5 md:p-6">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">All files</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    A cleaner table view inspired by modern file platforms.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline">Sort by</Button>
+                  <Button size="icon" variant="outline">
+                    <LayoutGridIcon className="size-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {items.length ? (
+                <div className="overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/82">
+                  <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] gap-4 border-b border-slate-100 px-5 py-4 text-sm font-medium text-muted-foreground">
+                    <span>Name</span>
+                    <span>Last modified</span>
+                    <span>Size</span>
+                    <span className="text-right">Action</span>
+                  </div>
+                  <div>
+                    {items.map((item) => {
                   const Icon = getItemIcon(item);
                   const internalHref = isFolder(item)
                     ? buildHref(
@@ -288,82 +452,56 @@ export function DriveDashboard({
                   const external = !isFolder(item) && !isVideoFile(item);
 
                   return (
-                    <article
-                      className="group flex h-full flex-col justify-between rounded-[1.5rem] border border-white/50 bg-white/70 p-4 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-xl"
+                    <div
+                      className="grid grid-cols-[minmax(0,1.4fr)_minmax(140px,0.7fr)_minmax(90px,0.45fr)_120px] items-center gap-4 border-t border-slate-100 px-5 py-4 transition hover:bg-slate-50/80"
                       key={item.id}
                     >
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex size-12 items-center justify-center rounded-2xl bg-slate-950 text-white">
-                            <Icon className="size-5" />
-                          </div>
-                          {isVideoFile(item) ? (
-                            <span className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-medium text-cyan-700">
-                              Streamable
-                            </span>
-                          ) : null}
+                      <div className="flex min-w-0 items-center gap-4">
+                        <div className="flex size-11 items-center justify-center rounded-2xl bg-slate-100 text-primary">
+                          <Icon className="size-4" />
                         </div>
-
-                        <div>
-                          <h3 className="line-clamp-2 text-base font-semibold text-foreground">
-                            {item.name}
-                          </h3>
-                          <p className="mt-2 text-sm text-muted-foreground">
-                            {isFolder(item)
-                              ? "Folder"
-                              : isVideoFile(item)
-                                ? "Video"
-                                : item.mimeType}
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-foreground">{item.name}</p>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {isFolder(item) ? "Folder" : isVideoFile(item) ? "Video" : item.mimeType}
                           </p>
                         </div>
                       </div>
-
-                      <div className="mt-6 flex flex-col gap-4">
-                        <dl className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                          <div>
-                            <dt>Modified</dt>
-                            <dd className="mt-1 text-foreground">{formatDate(item.modifiedTime)}</dd>
-                          </div>
-                          <div>
-                            <dt>Size</dt>
-                            <dd className="mt-1 text-foreground">{formatBytes(item.size)}</dd>
-                          </div>
-                        </dl>
-
-                        <Button asChild variant={isVideoFile(item) ? "default" : "outline"}>
+                      <div className="text-sm text-muted-foreground">{formatDate(item.modifiedTime)}</div>
+                      <div className="text-sm text-muted-foreground">{formatBytes(item.size)}</div>
+                      <div className="flex justify-end">
+                        <Button asChild size="sm" variant={isVideoFile(item) ? "default" : "outline"}>
                           {external ? (
                             <a href={externalHref ?? "#"} rel="noreferrer" target="_blank">
-                              Open file
+                              Open
                             </a>
                           ) : (
                             <Link href={internalHref ?? "/"}>
-                              {isFolder(item)
-                                ? "Open folder"
-                                : isVideoFile(item)
-                                  ? "Play video"
-                                  : "Open file"}
+                              {isFolder(item) ? "Open" : isVideoFile(item) ? "Play" : "Open"}
                             </Link>
                           )}
                         </Button>
                       </div>
-                    </article>
+                    </div>
                   );
-                })}
-              </div>
-            ) : (
-              <div className="flex min-h-80 flex-col items-center justify-center gap-4 rounded-[1.75rem] border border-dashed border-border bg-white/50 px-6 text-center">
-                <MonitorPlayIcon className="size-10 text-muted-foreground" />
-                <div className="max-w-md space-y-2">
-                  <h3 className="text-xl font-semibold text-foreground">
-                    No files match this view yet
-                  </h3>
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    Try a different view, clear the search query, or turn off the
-                    video-only filter.
-                  </p>
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="flex min-h-80 flex-col items-center justify-center gap-4 rounded-[1.75rem] border border-dashed border-border bg-white/50 px-6 text-center">
+                  <MonitorPlayIcon className="size-10 text-muted-foreground" />
+                  <div className="max-w-md space-y-2">
+                    <h3 className="text-xl font-semibold text-foreground">
+                      No files match this view yet
+                    </h3>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Try a different view, clear the search query, or turn off the
+                      video-only filter.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </section>
           </div>
         </section>
       </main>

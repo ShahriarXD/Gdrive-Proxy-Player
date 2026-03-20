@@ -15,7 +15,7 @@ const FORWARDED_HEADERS = [
   "last-modified",
 ] as const;
 
-export async function GET(
+async function handleStreamRequest(
   request: Request,
   context: { params: Promise<{ fileId: string }> }
 ) {
@@ -38,14 +38,28 @@ export async function GET(
 
   const range = request.headers.get("range");
   const upstream = await fetch(mediaUrl, {
+    method: request.method,
     headers: {
       Authorization: `Bearer ${session.accessToken}`,
       ...(range ? { Range: range } : {}),
     },
   });
 
-  if (!upstream.ok || !upstream.body) {
-    return new Response("Unable to read the video stream.", { status: upstream.status });
+  if (!upstream.ok) {
+    const details = await upstream.text();
+    console.error("Google Drive stream failed", {
+      fileId,
+      status: upstream.status,
+      details,
+    });
+
+    return new Response(details || "Unable to read the video stream.", {
+      status: upstream.status,
+    });
+  }
+
+  if (request.method === "GET" && !upstream.body) {
+    return new Response("Unable to read the video stream.", { status: 502 });
   }
 
   const headers = new Headers();
@@ -57,10 +71,36 @@ export async function GET(
     }
   });
 
+  if (!headers.has("content-type")) {
+    headers.set("content-type", metadata.mimeType);
+  }
+
+  if (!headers.has("accept-ranges")) {
+    headers.set("accept-ranges", "bytes");
+  }
+
+  if (!headers.has("content-disposition")) {
+    headers.set("content-disposition", `inline; filename="${metadata.name}"`);
+  }
+
   headers.set("x-content-type-options", "nosniff");
 
   return new Response(upstream.body, {
     status: upstream.status,
     headers,
   });
+}
+
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ fileId: string }> }
+) {
+  return handleStreamRequest(request, context);
+}
+
+export async function HEAD(
+  request: Request,
+  context: { params: Promise<{ fileId: string }> }
+) {
+  return handleStreamRequest(request, context);
 }
