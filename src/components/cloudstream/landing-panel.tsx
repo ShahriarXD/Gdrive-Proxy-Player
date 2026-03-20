@@ -1,8 +1,8 @@
 import {
+  ArrowRightIcon,
   CloudIcon,
-  FolderIcon,
-  PlayCircleIcon,
-  ShieldCheckIcon,
+  CommandIcon,
+  FilmIcon,
   SparklesIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -21,41 +21,37 @@ export function LandingPanel({
   deskStatus,
 }: LandingPanelProps) {
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-[1500px] items-center px-6 py-10 md:px-8">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-375 items-center px-6 py-10 md:px-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[8%] top-20 size-36 rounded-full bg-blue-400/12 blur-3xl" />
-        <div className="absolute right-[10%] top-[18%] size-48 rounded-full bg-cyan-300/14 blur-3xl" />
-        <div className="absolute bottom-16 left-[34%] size-56 rounded-full bg-violet-300/12 blur-3xl" />
+        <div className="home-orb home-orb-primary" />
+        <div className="home-orb home-orb-secondary" />
+        <div className="home-orb home-orb-tertiary" />
       </div>
 
-      <div className="relative grid w-full gap-8 lg:grid-cols-[1.02fr_0.98fr]">
-        <section className="premium-surface animate-slide-up-fade flex flex-col justify-between gap-8 rounded-[2.25rem] p-8 lg:p-10">
-          <div className="flex items-center justify-between">
+      <div className="relative grid w-full gap-8 lg:grid-cols-[1fr_0.95fr]">
+        <section className="premium-surface animate-slide-up-fade flex flex-col gap-7 rounded-[2.2rem] p-8 lg:p-10">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex items-center gap-3">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(88,105,255,1),rgba(80,195,255,0.9))] text-white shadow-[0_18px_50px_-24px_rgba(71,101,255,0.7)]">
+              <div className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#1e3a8a,#0891b2)] text-white shadow-[0_20px_45px_-26px_rgba(8,145,178,0.5)]">
                 <CloudIcon className="size-5" />
               </div>
-              <div>
-                <p className="text-xl font-semibold tracking-tight">CloudStream</p>
-                <p className="text-sm text-muted-foreground">Premium Drive streaming workspace</p>
-              </div>
+              <p className="text-lg font-semibold tracking-tight">CloudStream</p>
             </div>
-            <div className="rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Private drive portal
+            <div className="glass-pill rounded-full px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-600">
+              Private Drive portal
             </div>
           </div>
 
-          <div className="max-w-2xl space-y-5">
-            <div className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-800 shadow-lg">
-              <SparklesIcon className="size-4 text-cyan-300" />
-              CloudStream by KM · Built by Shahriar
+          <div className="space-y-4">
+            <div className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-700">
+              <SparklesIcon className="size-4 text-cyan-600" />
+              CloudStream by KM
             </div>
-            <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-foreground md:text-7xl">
-              Browse, search, and stream your own Google Drive files in one workspace.
+            <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.045em] text-foreground md:text-7xl">
+              Your Drive, now clean, cinematic, and fast.
             </h1>
             <p className="max-w-xl text-base leading-8 text-muted-foreground md:text-lg">
-              CloudStream by KM is a private Google Drive viewer built for folder
-              browsing, search, and smooth video playback from files you already own.
+              Browse folders, search instantly, and stream your own videos without clutter.
             </p>
           </div>
 
@@ -64,219 +60,88 @@ export function LandingPanel({
           <div className="flex flex-wrap items-center gap-3">
             <GoogleSignInButton />
             <p className="text-sm text-muted-foreground">
-              Sign in with Google to connect your own Drive and open the full app.
+              Sign in with Google and open your full workspace.
             </p>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="liquid-glass rounded-[1.75rem] p-5">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                What CloudStream Does
-              </p>
-              <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-                <p>
-                  CloudStream gives you a cleaner interface for browsing Google Drive
-                  folders, searching file names, opening supported files, and streaming
-                  Drive videos in a custom player.
-                </p>
-                <p>
-                  The homepage is public and visible before sign-in so users can
-                  understand the product, review the privacy policy, and decide whether
-                  to connect Google Drive.
-                </p>
-                <p>
-                  CloudStream is operated by Shahriar through the CloudStream by KM
-                  brand and published at this verified app domain.
-                </p>
-              </div>
-            </div>
-
-            <div className="liquid-glass rounded-[1.75rem] p-5">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                Why Google Data Is Requested
-              </p>
-              <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-                <p>CloudStream requests Google account and Google Drive read-only access only to:</p>
-                <ul className="list-disc space-y-2 pl-5">
-                  <li>Authenticate you with your Google account.</li>
-                  <li>Show your Drive folders, file names, file types, sizes, and structure.</li>
-                  <li>Stream supported video files you choose to play.</li>
-                  <li>Display your name, email, and profile image inside your session.</li>
-                </ul>
-                <p>
-                  CloudStream does not request permission to create, edit, or delete
-                  your Google Drive files.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="liquid-glass micro-lift hover-sheen rounded-[1.5rem] p-4">
-              <FolderIcon className="mb-4 size-5 text-primary" />
-              <p className="text-sm font-medium text-foreground">Folder-first navigation</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Browse Drive like a refined file system, not a raw API response.
-              </p>
+            <div className="liquid-glass micro-lift rounded-[1.4rem] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Quick jump</p>
+              <p className="mt-2 text-sm font-medium">Command+K focused search</p>
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1.5 text-xs text-white">
+                <CommandIcon className="size-3.5" />
+                K
+              </div>
             </div>
-            <div className="liquid-glass micro-lift hover-sheen rounded-[1.5rem] p-4">
-              <PlayCircleIcon className="mb-4 size-5 text-cyan-500" />
-              <p className="text-sm font-medium text-foreground">Instant video streaming</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Range-aware playback gives fast scrubbing and lightweight delivery.
-              </p>
+            <div className="liquid-glass micro-lift rounded-[1.4rem] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Playback</p>
+              <p className="mt-2 text-sm font-medium">Fast stream with smooth seek</p>
+              <FilmIcon className="mt-4 size-5 text-cyan-600" />
             </div>
-            <div className="liquid-glass micro-lift hover-sheen rounded-[1.5rem] p-4">
-              <ShieldCheckIcon className="mb-4 size-5 text-emerald-500" />
-              <p className="text-sm font-medium text-foreground">Session-safe access</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Auth.js refreshes tokens in the background so the workspace stays live.
-              </p>
+            <div className="liquid-glass micro-lift rounded-[1.4rem] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Access</p>
+              <p className="mt-2 text-sm font-medium">Read-only Google Drive scope</p>
+              <ArrowRightIcon className="mt-4 size-5 text-blue-700" />
             </div>
           </div>
 
-          <div className="liquid-glass rounded-[1.75rem] p-5">
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Owner and Public Contact
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-sm leading-7 text-muted-foreground">
-              <p>
-                CloudStream by KM is operated by Shahriar.
-              </p>
-              <Link
-                className="glass-pill glass-hover rounded-full px-4 py-2 text-foreground"
-                href="https://github.com/ShahriarXD"
-                rel="noreferrer"
-                target="_blank"
-              >
-                GitHub: @ShahriarXD
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             <Link className="glass-pill glass-hover rounded-full px-4 py-2" href="/privacy-policy">
               Privacy Policy
             </Link>
             <Link className="glass-pill glass-hover rounded-full px-4 py-2" href="/terms-of-service">
               Terms of Service
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Public legal pages are available before login.
-            </p>
+            <Link
+              className="glass-pill glass-hover rounded-full px-4 py-2 text-foreground"
+              href="https://github.com/ShahriarXD"
+              rel="noreferrer"
+              target="_blank"
+            >
+              @ShahriarXD
+            </Link>
           </div>
         </section>
 
-        <section className="animate-slide-up-fade relative flex min-h-[720px] items-center justify-center delay-100">
-          <div className="soft-grid absolute inset-0 rounded-[2.5rem] opacity-50" />
-          <div className="absolute right-4 top-4 z-20 w-full max-w-[280px]">
-            <LocalDeskWidget initialStatus={deskStatus} />
-          </div>
-          <div className="absolute inset-x-12 top-10 h-32 rounded-full bg-blue-500/8 blur-3xl" />
-          <div className="floating-card relative w-full max-w-[640px]">
-            <div className="absolute -left-8 top-16 h-[82%] w-full rounded-[2rem] bg-white/36 blur-sm" />
-            <div className="absolute -right-4 top-10 h-[86%] w-full rounded-[2rem] bg-[linear-gradient(180deg,rgba(93,108,255,0.12),rgba(85,211,255,0.04))] blur-sm" />
-            <div className="premium-surface relative rounded-[2.25rem] p-5">
-              <div className="liquid-glass mb-4 flex items-center justify-between rounded-[1.75rem] px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(89,108,255,1),rgba(75,198,255,0.9))] text-white">
-                    <CloudIcon className="size-5" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground">CloudStream OS</p>
-                    <p className="text-sm text-muted-foreground">A premium Drive dashboard</p>
-                  </div>
-                </div>
-                <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">
-                  LIVE
-                </div>
+        <section className="animate-slide-up-fade relative flex min-h-160 items-center justify-center delay-100">
+          <div className="tilt-stage relative w-full max-w-155">
+            <div className="orbit-ring orbit-ring-a" />
+            <div className="orbit-ring orbit-ring-b" />
+            <div className="premium-surface relative rounded-[2.1rem] p-5">
+              <div className="liquid-glass mb-4 rounded-3xl p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Workspace preview</p>
+                <p className="mt-2 text-lg font-semibold">CloudStream Dashboard</p>
               </div>
 
-              <div className="space-y-4">
-                <div className="topbar-shadow liquid-glass rounded-[1.75rem] p-4">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-rose-400" />
-                    <div className="h-3 w-3 rounded-full bg-amber-300" />
-                    <div className="h-3 w-3 rounded-full bg-emerald-400" />
-                  </div>
-                  <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Search folder or file</p>
-                      <p className="font-medium text-foreground">Car Video.mp4</p>
-                    </div>
-                    <Button size="sm">Search</Button>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="liquid-glass rounded-[1.4rem] p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Queue</p>
+                  <div className="mt-3 space-y-2">
+                    {[
+                      "Travel_Reel.mp4",
+                      "Lecture_Week03.mp4",
+                      "Family_Archive.mov",
+                    ].map((item) => (
+                      <div className="glass-pill rounded-xl px-3 py-2 text-sm" key={item}>
+                        {item}
+                      </div>
+                    ))}
                   </div>
                 </div>
-
-                <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
-                  <div className="sidebar-shadow liquid-glass rounded-[1.75rem] p-4">
-                    <div className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                      Navigation
-                    </div>
-                    <div className="space-y-2">
-                      {[
-                        "All files",
-                        "Photos",
-                        "Starred",
-                        "Recent",
-                        "Shared",
-                      ].map((item, index) => (
-                        <div
-                          className={`rounded-2xl px-4 py-3 text-sm ${
-                            index === 0
-                              ? "border border-white/30 bg-[linear-gradient(180deg,rgba(99,113,255,0.92),rgba(95,158,255,0.78))] text-white shadow-[0_20px_46px_-28px_rgba(74,102,255,0.52),inset_0_1px_0_rgba(255,255,255,0.24)]"
-                              : "glass-pill text-foreground"
-                          }`}
-                          key={item}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="liquid-glass rounded-[1.75rem] p-4">
-                      <div className="mb-4 flex items-center justify-between">
-                        <p className="font-semibold">Live status</p>
-                        <p className="text-sm text-emerald-600">Connected</p>
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          ["Storage usage", "75% of 15GB used"],
-                          ["Videos syncing", "1,204 videos indexed"],
-                          ["Last playback", "Resume-ready across devices"],
-                        ].map(([label, value]) => (
-                          <div className="glass-pill glass-hover rounded-[1.25rem] p-3" key={label}>
-                            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
-                            <p className="mt-2 text-sm font-medium text-foreground">{value}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="liquid-glass rounded-[1.75rem] p-4">
-                      <div className="mb-3 flex items-center justify-between">
-                        <p className="font-semibold">All files</p>
-                        <p className="text-sm text-muted-foreground">Table view</p>
-                      </div>
-                      <div className="space-y-2">
-                        {[
-                          "Financial report.xls",
-                          "essay_english.docs",
-                          "Car Video.mp4",
-                        ].map((item) => (
-                          <div className="glass-pill glass-hover flex items-center justify-between rounded-2xl px-3 py-3 text-sm" key={item}>
-                            <span className="max-w-[68%] truncate font-medium">{item}</span>
-                            <span className="text-muted-foreground">Open</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                <div className="liquid-glass rounded-[1.4rem] p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Status</p>
+                  <div className="mt-3 space-y-3">
+                    <div className="glass-pill rounded-xl px-3 py-2 text-sm">Connected to Google Drive</div>
+                    <div className="glass-pill rounded-xl px-3 py-2 text-sm">Range streaming enabled</div>
+                    <div className="glass-pill rounded-xl px-3 py-2 text-sm">Search index ready</div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="absolute right-4 top-4 z-20 w-full max-w-70">
+            <LocalDeskWidget initialStatus={deskStatus} />
           </div>
         </section>
       </div>

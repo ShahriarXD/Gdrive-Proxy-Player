@@ -13,7 +13,6 @@ import {
   Volume2Icon,
   VolumeOffIcon,
 } from "lucide-react";
-import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +27,6 @@ type VideoPlayerProps = {
 };
 
 type PreviewState = {
-  image: string | null;
   time: number;
   x: number;
 };
@@ -91,13 +89,8 @@ export function VideoPlayer({
 }: VideoPlayerProps) {
   const playerShellRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const previewVideoRef = useRef<HTMLVideoElement | null>(null);
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const ambientCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const previewSeekFrameRef = useRef<number | null>(null);
-  const pendingPreviewTimeRef = useRef<number | null>(null);
-  const lastPreviewRequestRef = useRef<number | null>(null);
   const hoverFrameRef = useRef<number | null>(null);
   const dragActiveRef = useRef(false);
   const gestureStateRef = useRef<{
@@ -126,9 +119,6 @@ export function VideoPlayer({
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const [resolution, setResolution] = useState<{ width: number; height: number } | null>(null);
   const [interactionHud, setInteractionHud] = useState<InteractionHudState | null>(null);
-  const [previewReady, setPreviewReady] = useState(false);
-  const [posterFrame, setPosterFrame] = useState<string | null>(null);
-  const [showPoster, setShowPoster] = useState(true);
 
   const storageKey = useMemo(() => `cloudstream:resume:${fileId}`, [fileId]);
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
@@ -169,10 +159,6 @@ export function VideoPlayer({
 
       if (interactionHudTimeoutRef.current) {
         window.clearTimeout(interactionHudTimeoutRef.current);
-      }
-
-      if (previewSeekFrameRef.current) {
-        window.cancelAnimationFrame(previewSeekFrameRef.current);
       }
 
       if (hoverFrameRef.current) {
@@ -334,9 +320,11 @@ export function VideoPlayer({
   };
 
   const toggleFullscreen = async () => {
+    const media = videoRef.current;
     const playerShell = playerShellRef.current;
+    const fullscreenTarget = media ?? playerShell;
 
-    if (!playerShell) {
+    if (!fullscreenTarget) {
       return;
     }
 
@@ -345,97 +333,14 @@ export function VideoPlayer({
       return;
     }
 
-    await playerShell.requestFullscreen().catch(() => undefined);
-  };
-
-  const updatePreviewFrame = (time: number) => {
-    const previewVideo = previewVideoRef.current;
-
-    if (!previewVideo || !Number.isFinite(time)) {
+    if ("requestFullscreen" in fullscreenTarget) {
+      await fullscreenTarget.requestFullscreen().catch(() => undefined);
       return;
     }
 
-    if (lastPreviewRequestRef.current !== null && Math.abs(lastPreviewRequestRef.current - time) < 0.18) {
-      return;
+    if (media && "webkitEnterFullscreen" in media) {
+      (media as HTMLVideoElement & { webkitEnterFullscreen: () => void }).webkitEnterFullscreen();
     }
-
-    if (!previewReady || previewVideo.readyState < 2) {
-      return;
-    }
-
-    lastPreviewRequestRef.current = time;
-    pendingPreviewTimeRef.current = time;
-
-    if (previewSeekFrameRef.current !== null) {
-      return;
-    }
-
-    previewSeekFrameRef.current = window.requestAnimationFrame(() => {
-      previewSeekFrameRef.current = null;
-
-      if (!previewVideoRef.current || pendingPreviewTimeRef.current === null) {
-        return;
-      }
-
-      previewVideoRef.current.currentTime = pendingPreviewTimeRef.current;
-    });
-  };
-
-  const drawPreviewFrame = () => {
-    const previewVideo = previewVideoRef.current;
-
-    if (!previewVideo || !preview || previewVideo.videoWidth === 0 || previewVideo.videoHeight === 0) {
-      return;
-    }
-
-    const canvas = previewCanvasRef.current ?? document.createElement("canvas");
-    previewCanvasRef.current = canvas;
-    canvas.width = 128;
-    canvas.height = 72;
-
-    const context = canvas.getContext("2d");
-
-    if (!context) {
-      return;
-    }
-
-    context.drawImage(previewVideo, 0, 0, canvas.width, canvas.height);
-    const nextImage = canvas.toDataURL("image/jpeg", 0.45);
-
-    if (!posterFrame) {
-      setPosterFrame(nextImage);
-    }
-
-    setPreview((currentValue) =>
-      currentValue
-        ? {
-            ...currentValue,
-            image: nextImage,
-          }
-        : currentValue
-    );
-  };
-
-  const capturePosterFrame = () => {
-    const previewVideo = previewVideoRef.current;
-
-    if (!previewVideo || previewVideo.videoWidth === 0 || previewVideo.videoHeight === 0) {
-      return;
-    }
-
-    const canvas = previewCanvasRef.current ?? document.createElement("canvas");
-    previewCanvasRef.current = canvas;
-    canvas.width = 128;
-    canvas.height = 72;
-
-    const context = canvas.getContext("2d");
-
-    if (!context) {
-      return;
-    }
-
-    context.drawImage(previewVideo, 0, 0, canvas.width, canvas.height);
-    setPosterFrame(canvas.toDataURL("image/jpeg", 0.45));
   };
 
   const updatePreviewFromClientX = (clientX: number) => {
@@ -457,11 +362,9 @@ export function VideoPlayer({
       const nextTime = ratio * duration;
 
       setPreview({
-        image: preview?.image ?? posterFrame ?? null,
         time: nextTime,
         x: relativeX,
       });
-      updatePreviewFrame(nextTime);
     });
   };
 
@@ -475,11 +378,10 @@ export function VideoPlayer({
     const ratio = bounds.width ? relativeX / bounds.width : 0;
     seekTo(ratio * duration);
     setPreview({
-      image: preview?.image ?? null,
       time: ratio * duration,
       x: relativeX,
     });
-  }, [duration, preview?.image, seekTo]);
+  }, [duration, seekTo]);
 
   useEffect(() => {
     const handlePointerMove = (event: PointerEvent) => {
@@ -732,7 +634,7 @@ export function VideoPlayer({
             }}
           />
         ) : null}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_25%),linear-gradient(180deg,rgba(8,12,23,0.1),rgba(8,12,23,0.74))]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_25%),linear-gradient(180deg,rgba(8,12,23,0.1),rgba(8,12,23,0.74))]" />
 
         <div className="relative">
           {showNowPlaying ? (
@@ -765,19 +667,6 @@ export function VideoPlayer({
           ) : null}
 
           <div className="group relative">
-            {showPoster && posterFrame ? (
-              <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[1.6rem] bg-slate-950">
-                <Image
-                  alt={fileName ?? "Video poster"}
-                  className="h-full w-full object-contain opacity-95 transition-opacity duration-300"
-                  fill
-                  sizes="100vw"
-                  src={posterFrame}
-                  unoptimized
-                />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(8,12,23,0.25)_100%)]" />
-              </div>
-            ) : null}
             <video
               ref={videoRef}
               className="block h-auto max-h-[72vh] w-full rounded-[1.6rem] object-contain"
@@ -808,7 +697,6 @@ export function VideoPlayer({
                 setPlaybackError(reason);
               }}
               onLoadedMetadata={handleLoadedMetadata}
-              onLoadedData={() => setShowPoster(false)}
               onPause={() => {
                 setIsPlaying(false);
                 persistPlayback();
@@ -829,24 +717,6 @@ export function VideoPlayer({
               <source src={src} type={type} />
               Your browser does not support HTML5 video.
             </video>
-
-            <video
-              ref={previewVideoRef}
-              className="pointer-events-none absolute left-0 top-0 size-0 opacity-0"
-              muted
-              playsInline
-              preload="auto"
-              src={src}
-              onLoadedData={() => {
-                setPreviewReady(true);
-                capturePosterFrame();
-              }}
-              onLoadedMetadata={() => {
-                setPreviewReady(true);
-                capturePosterFrame();
-              }}
-              onSeeked={drawPreviewFrame}
-            />
 
             <div className="absolute inset-y-0 left-0 z-20 w-[26%]">
               <div
@@ -881,26 +751,8 @@ export function VideoPlayer({
                     className="pointer-events-none absolute bottom-full z-20 mb-3 -translate-x-1/2"
                     style={{ left: preview.x }}
                   >
-                    <div className="overflow-hidden rounded-[1rem] border border-white/12 bg-black/70 shadow-2xl backdrop-blur-md">
-                      <div className="h-[72px] w-[128px] bg-slate-900">
-                        {preview.image ? (
-                          <Image
-                            alt="Preview frame"
-                            className="h-full w-full object-cover"
-                            height={72}
-                            src={preview.image}
-                            unoptimized
-                            width={128}
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(110deg,rgba(255,255,255,0.04)_8%,rgba(255,255,255,0.14)_18%,rgba(255,255,255,0.04)_33%)] bg-[length:200%_100%] animate-[shimmer_1.35s_linear_infinite] text-[10px] uppercase tracking-[0.24em] text-white/35">
-                            Preview
-                          </div>
-                        )}
-                      </div>
-                      <div className="px-3 py-2 text-center text-xs font-medium text-white">
-                        {formatPlaybackTime(preview.time)}
-                      </div>
+                    <div className="rounded-full border border-white/16 bg-black/72 px-3 py-2 text-xs font-medium text-white shadow-2xl backdrop-blur-md">
+                      {formatPlaybackTime(preview.time)}
                     </div>
                   </div>
                 ) : null}
@@ -955,7 +807,7 @@ export function VideoPlayer({
                     type="range"
                     value={volume}
                   />
-                  <div className="hidden min-w-[112px] text-sm text-white/80 md:block">
+                  <div className="hidden min-w-28 text-sm text-white/80 md:block">
                     {formatPlaybackTime(currentTime)} / {formatPlaybackTime(duration)}
                   </div>
                 </div>
