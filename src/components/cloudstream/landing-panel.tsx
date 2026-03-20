@@ -48,7 +48,7 @@ export function LandingPanel({
           <div className="max-w-2xl space-y-5">
             <div className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-800 shadow-lg">
               <SparklesIcon className="size-4 text-cyan-300" />
-              CloudStream by KM
+              CloudStream by KM · Built by Shahriar
             </div>
             <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-foreground md:text-7xl">
               Browse, search, and stream your own Google Drive files in one workspace.
@@ -83,6 +83,10 @@ export function LandingPanel({
                   The homepage is public and visible before sign-in so users can
                   understand the product, review the privacy policy, and decide whether
                   to connect Google Drive.
+                </p>
+                <p>
+                  CloudStream is operated by Shahriar through the CloudStream by KM
+                  brand and published at this verified app domain.
                 </p>
               </div>
             </div>
@@ -128,6 +132,25 @@ export function LandingPanel({
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Auth.js refreshes tokens in the background so the workspace stays live.
               </p>
+            </div>
+          </div>
+
+          <div className="liquid-glass rounded-[1.75rem] p-5">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Owner and Public Contact
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-sm leading-7 text-muted-foreground">
+              <p>
+                CloudStream by KM is operated by Shahriar.
+              </p>
+              <Link
+                className="glass-pill glass-hover rounded-full px-4 py-2 text-foreground"
+                href="https://github.com/ShahriarXD"
+                rel="noreferrer"
+                target="_blank"
+              >
+                GitHub: @ShahriarXD
+              </Link>
             </div>
           </div>
 

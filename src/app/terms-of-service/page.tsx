@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service | CloudStream by KM",
-  description: "Terms of Service for CloudStream by KM.",
+  description: "Terms of Service for CloudStream by KM, operated by Shahriar.",
 };
 
 export default function TermsOfServicePage() {
@@ -32,6 +32,9 @@ export default function TermsOfServicePage() {
             <p>
               These Terms of Service govern your use of CloudStream by KM. By
               using the service, you agree to these terms.
+            </p>
+            <p>
+              CloudStream by KM is operated by Shahriar.
             </p>
           </section>
 
@@ -112,6 +115,23 @@ export default function TermsOfServicePage() {
               These Terms of Service may be updated from time to time. Continued
               use of the service after changes means you accept the updated
               terms.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-foreground">Public Contact</h2>
+            <p>
+              Public profile for the service owner:
+            </p>
+            <p>
+              <Link
+                className="text-foreground underline underline-offset-4"
+                href="https://github.com/ShahriarXD"
+                rel="noreferrer"
+                target="_blank"
+              >
+                github.com/ShahriarXD
+              </Link>
             </p>
           </section>
         </div>

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | CloudStream by KM",
-  description: "Privacy Policy for CloudStream by KM.",
+  description: "Privacy Policy for CloudStream by KM, operated by Shahriar.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -33,6 +33,9 @@ export default function PrivacyPolicyPage() {
               This Privacy Policy explains how CloudStream by KM collects, uses,
               and protects information when you sign in with Google and use the
               app to browse and stream files from your Google Drive.
+            </p>
+            <p>
+              CloudStream by KM is operated by Shahriar.
             </p>
           </section>
 
@@ -105,8 +108,19 @@ export default function PrivacyPolicyPage() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">Contact</h2>
             <p>
-              If you have questions about this Privacy Policy, contact the app
-              owner through the contact details you publish for this service.
+              If you have questions about this Privacy Policy, you can contact
+              the app owner through the public profile linked below.
+            </p>
+            <p>
+              GitHub profile:{" "}
+              <Link
+                className="text-foreground underline underline-offset-4"
+                href="https://github.com/ShahriarXD"
+                rel="noreferrer"
+                target="_blank"
+              >
+                github.com/ShahriarXD
+              </Link>
             </p>
           </section>
         </div>

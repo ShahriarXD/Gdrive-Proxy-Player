@@ -18,7 +18,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "CloudStream by KM",
   description:
-    "Browse Google Drive in a polished dashboard and stream videos through a Vercel-friendly proxy.",
+    "CloudStream by KM, operated by Shahriar, helps you browse Google Drive and stream your own videos in a polished web workspace.",
 };
 
 export default function RootLayout({
